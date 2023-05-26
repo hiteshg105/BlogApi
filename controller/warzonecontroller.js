@@ -12,7 +12,7 @@ exports.addWar = async (req, res) => {
       war,
     });
   } catch (error) {
-    console.log(error);
+    console.log(error,"add warzone error");
     res.status(400).json({
       status: false,
       msg: "Something Went wrong",
