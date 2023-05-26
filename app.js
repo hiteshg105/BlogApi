@@ -41,7 +41,7 @@ const notification = require("./routes/notification");
 const planet_position = require("./routes/planet_position");
 const treanding = require("./routes/treanding");
 const mail = require("./routes/mail");
-const warzone = require("./routes/warzone");
+const warzone = require("./routes/warzoneroute");
 
 //console
 
