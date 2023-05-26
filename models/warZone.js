@@ -18,6 +18,10 @@ const warSchema = new Schema(
     title: {
       type: String,
     },
+    isHomePage: {
+      type: Boolean,
+      default: false,
+    },
     startDate: {
       type: Date,
     },

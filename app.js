@@ -51,7 +51,6 @@ app.use("/", category);
 app.use("/", subcategory);
 app.use("/", admin);
 app.use("/", year);
-
 app.use("/", language);
 app.use("/", submit_resrc);
 app.use("/", blog);
