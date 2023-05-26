@@ -32,4 +32,4 @@ const warSchema = new Schema(
   { timestamps: true }
 );
 
-module.exports = mongoose.model("Warzone", warSchema);
+module.exports = mongoose.model("warzone", warSchema);
