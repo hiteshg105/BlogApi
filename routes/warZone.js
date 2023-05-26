@@ -6,7 +6,7 @@ const {
   getWarDetail,
   getAllWar,
   updateWarzone,
-} = require("../controller/warZone");
+} = require("../controller/warzone");
 const router = express.Router();
 
 router.post("/add/warzone", addWar);

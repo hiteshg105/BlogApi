@@ -41,7 +41,7 @@ const notification = require("./routes/notification");
 const planet_position = require("./routes/planet_position");
 const treanding = require("./routes/treanding");
 const mail = require("./routes/mail");
-const Warzone = require("./routes/warZone");
+const warzone = require("./routes/warzone");
 
 //console
 
@@ -68,7 +68,7 @@ app.use("/", notification);
 app.use("/", planet_position);
 app.use("/", treanding);
 app.use("/", mail);
-app.use("/", Warzone);
+app.use("/", warzone);
 
 app.get("/", (req, res) => {
   res.send("Hello World!");

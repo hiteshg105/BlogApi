@@ -1,4 +1,4 @@
-const WarZone = require("../models/warZone");
+const WarZone = require("../models/warzone");
 const Comment = require("../models/comments");
 var cron = require("node-cron");
 
