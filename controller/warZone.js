@@ -9,7 +9,7 @@ exports.addWar = async (req, res) => {
     res.status(200).json({
       status: true,
       msg: "War Created Successfully...",
-      war: war,
+      war,
     });
   } catch (error) {
     console.log(error);
