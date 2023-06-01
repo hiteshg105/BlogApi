@@ -12,7 +12,7 @@ exports.addWar = async (req, res) => {
       war,
     });
   } catch (error) {
-    console.log(error,"add warzone error");
+    console.log(error, "add warzone error");
     res.status(400).json({
       status: false,
       msg: "Something Went wrong",
@@ -82,13 +82,70 @@ exports.getWarDetail = async (req, res) => {
   try {
     const data = await WarZone.findById(req.params.id)
       .populate("resource1")
-      .populate("resource2");
+      .populate("resource2")
+      .populate({
+        path: "resource1",
+        populate: {
+          path: "userid",
+          model: "user", // Assuming "User" is the model name for the user collection
+        },
+      })
+      .populate({
+        path: "resource2",
+        populate: {
+          path: "userid",
+          model: "user", // Assuming "User" is the model name for the user collection
+        },
+      })
+      .populate({
+        path: "resource1",
+        populate: {
+          path: "category",
+          model: "category", // Assuming "User" is the model name for the user collection
+        },
+      })
+      .populate({
+        path: "resource2",
+        populate: {
+          path: "category",
+          model: "category", // Assuming "User" is the model name for the user collection
+        },
+      })
+      .populate({
+        path: "resource1",
+        populate: {
+          path: "language",
+          model: "language", // Assuming "User" is the model name for the user collection
+        },
+      })
+      .populate({
+        path: "resource2",
+        populate: {
+          path: "language",
+          model: "language", // Assuming "User" is the model name for the user collection
+        },
+      })
+      .populate({
+        path: "resource1",
+        populate: {
+          path: "relYear",
+          model: "year", // Assuming "User" is the model name for the user collection
+        },
+      })
+      .populate({
+        path: "resource2",
+        populate: {
+          path: "relYear",
+          model: "year", // Assuming "User" is the model name for the user collection
+        },
+      });
     res.status(200).json({
       status: true,
       msg: "war detail listing successfully.......",
       war: data,
     });
   } catch (error) {
+    console.log(error);
     res.status(400).json({
       status: false,
       msg: "Something Went wrong",
