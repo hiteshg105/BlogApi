@@ -3,9 +3,9 @@ const app = express();
 const cors = require("cors");
 const AWS = require("aws-sdk");
 const fs = require("fs");
-var https = require('https');
+var https = require("https");
 
-const path = require('path')
+const path = require("path");
 
 require("dotenv").config();
 const mongoose = require("mongoose");
@@ -16,34 +16,32 @@ app.use(express.urlencoded({ extended: true }));
 app.use(cors());
 
 //require
- 
-const user = require("./routes/user")
-const category = require("./routes/category")
-const subcategory = require("./routes/subcategory")
-const admin = require("./routes/admin")
-const year = require("./routes/year")
-const language = require("./routes/language")
 
-const submit_resrc = require("./routes/submit_resrc")
-const blog = require("./routes/blog")
-const newsletter = require("./routes/newsletter")
+const user = require("./routes/user");
+const category = require("./routes/category");
+const subcategory = require("./routes/subcategory");
+const admin = require("./routes/admin");
+const year = require("./routes/year");
+const language = require("./routes/language");
 
-const contact_us = require("./routes/contact_us")
-const featured_cnt = require("./routes/featured_cnt")
-const newslttr_video = require("./routes/newslttr_video")
-const like = require("./routes/like")
-const comments = require("./routes/comments")
-const faq = require("./routes/faq")
-const privacy_policy = require("./routes/privacy_policy")
-const terms_condition = require("./routes/terms_condition")
-const how_it_works = require("./routes/how_it_works")
-const notification = require("./routes/notification")
-const planet_position = require("./routes/planet_position")
-const treanding = require("./routes/treanding")
+const submit_resrc = require("./routes/submit_resrc");
+const blog = require("./routes/blog");
+const newsletter = require("./routes/newsletter");
+
+const contact_us = require("./routes/contact_us");
+const featured_cnt = require("./routes/featured_cnt");
+const newslttr_video = require("./routes/newslttr_video");
+const like = require("./routes/like");
+const comments = require("./routes/comments");
+const faq = require("./routes/faq");
+const privacy_policy = require("./routes/privacy_policy");
+const terms_condition = require("./routes/terms_condition");
+const how_it_works = require("./routes/how_it_works");
+const notification = require("./routes/notification");
+const planet_position = require("./routes/planet_position");
+const treanding = require("./routes/treanding");
 const mail = require("./routes/mail");
-
-
-
+const warzone = require("./routes/warzoneroute");
 
 //console
 
@@ -53,7 +51,6 @@ app.use("/", category);
 app.use("/", subcategory);
 app.use("/", admin);
 app.use("/", year);
-
 app.use("/", language);
 app.use("/", submit_resrc);
 app.use("/", blog);
@@ -68,18 +65,10 @@ app.use("/", privacy_policy);
 app.use("/", terms_condition);
 app.use("/", how_it_works);
 app.use("/", notification);
-app.use("/", planet_position );
-app.use("/", treanding );
+app.use("/", planet_position);
+app.use("/", treanding);
 app.use("/", mail);
-
-
-
-
-
-
-
-
-
+app.use("/", warzone);
 
 app.get("/", (req, res) => {
   res.send("Hello World!");
@@ -91,10 +80,9 @@ app.get("/", (req, res) => {
 //   secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY,
 // });
 
-
 const s3 = new AWS.S3({
   accessKeyId: process.env.AWS_ACCESS_KEY,
-  secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY
+  secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY,
 });
 //console.log("ss3333",s3)
 mongoose
@@ -111,7 +99,6 @@ mongoose
   .catch((error) => {
     console.log(error);
   });
-  
 
 // app.listen(process.env.PORT || 9000, () => {
 //   console.log("Example app listening on port 9000");
@@ -129,11 +116,11 @@ mongoose
 //    http://localhost:5000/admin
 const sslServer = https.createServer(
   {
-    key: fs.readFileSync(path.join(__dirname, 'cert', 'key.pem')),
-    cert: fs.readFileSync(path.join(__dirname, 'cert', 'cert.pem')),
+    key: fs.readFileSync(path.join(__dirname, "cert", "key.pem")),
+    cert: fs.readFileSync(path.join(__dirname, "cert", "cert.pem")),
   },
   app
-)
+);
 
 //sslServer.listen(  console.log("Example app listening on port 9000"))
 // https.createServer(sslServer, function (req, res) {
