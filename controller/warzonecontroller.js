@@ -185,6 +185,77 @@ exports.updateWarzone = async (req, res) => {
   }
 };
 
+exports.warReview = async (req, res) => {
+  const war = await WarZone.findById(req.params.id);
+  const rcs1Comment = await Comment.find({
+    submitresrcId: war.resource1,
+    createdAt: {
+      $lte: war.endDate,
+      $gte: war.startDate,
+    },
+  });
+  const sumOfRatingsrsc1 = rcs1Comment.reduce((total, comment) => {
+    return total + comment.rating;
+  }, 0);
+  const rsc1AvReview = sumOfRatingsrsc1 / rcs1Comment.length;
+  const rcs2Comment = await Comment.find({
+    submitresrcId: war.resource2,
+    createdAt: {
+      $lte: war.endDate,
+      $gte: war.startDate,
+    },
+  });
+  const sumOfRatingsrsc2 = rcs2Comment.reduce((total, comment) => {
+    return total + comment.rating;
+  }, 0);
+  const rsc2AvReview = sumOfRatingsrsc2 / rcs2Comment.length;
+  res.status(200).json({
+    status: true,
+    msg: "war updated successfully.......",
+    rsc1AvReview,
+    rsc2AvReview,
+    toalRsc1: rcs1Comment.length,
+    toalRsc2: rcs2Comment.length,
+  });
+};
+
+exports.warRscsReview = async (req, res) => {
+  const war = await WarZone.findById(req.params.id);
+  const rcs1Comment = await Comment.find({
+    submitresrcId: war.resource1,
+  });
+  const sumOfRatingsrsc1 = rcs1Comment.reduce((total, comment) => {
+    return total + comment.rating;
+  }, 0);
+  const rsc1AvReview = sumOfRatingsrsc1 / rcs1Comment.length;
+
+  const rcs2Comment = await Comment.find({
+    submitresrcId: war.resource2,
+  });
+  const sumOfRatingsrsc2 = rcs2Comment.reduce((total, comment) => {
+    return total + comment.rating;
+  }, 0);
+
+  const rsc2AvReview = sumOfRatingsrsc2 / rcs2Comment.length;
+
+  // const rsc1Re1 = rcs1Comment.filter((e) => e.rating > 0 && e.rating <= 1);
+  // const rsc1Re2 = rcs1Comment.filter((e) => e.rating > 1 && e.rating <= 2);
+  // const rsc1Re3 = rcs1Comment.filter((e) => e.rating > 2 && e.rating <= 3);
+  // const rsc1Re4 = rcs1Comment.filter((e) => e.rating > 3 && e.rating <= 4);
+  // const rsc1Re5 = rcs1Comment.filter((e) => e.rating > 4 && e.rating <= 5);
+
+  res.status(200).json({
+    status: true,
+    msg: "war updated successfully.......",
+    rsc1AvReview,
+    rsc2AvReview,
+    toalRsc1: rcs1Comment.length,
+    toalRsc2: rcs2Comment.length,
+    rsc1Comment: rcs1Comment,
+    rsc2Comment: rcs2Comment,
+  });
+};
+
 // get winner
 cron.schedule("0 0 * * *", async () => {
   const date = new Date();
@@ -222,7 +293,5 @@ cron.schedule("0 0 * * *", async () => {
       data[i].winner = rcs2Comment[0].submitresrcId;
       await data[i].save();
     }
-    // console.log(sumOfRatingsrsc1, "sumOfRatingsrsc1");
-    // console.log(sumOfRatingsrsc2, "sumOfRatingsrsc2");
   }
 });
