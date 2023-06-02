@@ -57,24 +57,7 @@ exports.addSub_resrc = async (req, res) => {
     language,
   } = req.body;
 
-  const newSubmit = new Submit({
-    userid: userid,
-    link: link,
-    category: category,
-    sub_category: sub_category,
-    type: type,
-    format: format,
-    language: language,
-    topics: topics,
-    desc: desc,
-    resTitle: resTitle,
-    creatorName: creatorName,
-    relYear: relYear,
-    res_desc: res_desc,
-    comment: comment,
-    img: img,
-    usertype: "user",
-  });
+  const newSubmit = await Submit.create(req.body);
   if (req.file) {
     const resp = await cloudinary.uploader.upload(req.file.path);
     // if (resp) {
