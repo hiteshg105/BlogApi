@@ -1,6 +1,7 @@
 const WarZone = require("../models/warzonemodel");
 const Comment = require("../models/comments");
 var cron = require("node-cron");
+const moment = require("moment");
 
 // add war
 exports.addWar = async (req, res) => {
@@ -238,12 +239,6 @@ exports.warRscsReview = async (req, res) => {
 
   const rsc2AvReview = sumOfRatingsrsc2 / rcs2Comment.length;
 
-  // const rsc1Re1 = rcs1Comment.filter((e) => e.rating > 0 && e.rating <= 1);
-  // const rsc1Re2 = rcs1Comment.filter((e) => e.rating > 1 && e.rating <= 2);
-  // const rsc1Re3 = rcs1Comment.filter((e) => e.rating > 2 && e.rating <= 3);
-  // const rsc1Re4 = rcs1Comment.filter((e) => e.rating > 3 && e.rating <= 4);
-  // const rsc1Re5 = rcs1Comment.filter((e) => e.rating > 4 && e.rating <= 5);
-
   res.status(200).json({
     status: true,
     msg: "war updated successfully.......",
@@ -253,6 +248,37 @@ exports.warRscsReview = async (req, res) => {
     toalRsc2: rcs2Comment.length,
     rsc1Comment: rcs1Comment,
     rsc2Comment: rcs2Comment,
+  });
+};
+
+exports.warRscsComment = async (req, res) => {
+  const war = await WarZone.findById(req.params.id);
+  const rcs1Comment = await Comment.find({
+    submitresrcId: war.resource1,
+  }).populate("userid");
+  const newData = JSON.parse(JSON.stringify(rcs1Comment));
+
+  for (let i = 0; i < newData.length; i++) {
+    const data = moment(newData[i].createdAt).fromNow();
+    newData[i].timeLine = data;
+  }
+
+  const rcs2Comment = await Comment.find({
+    submitresrcId: war.resource2,
+  }).populate("userid");
+
+  const newData2 = JSON.parse(JSON.stringify(rcs2Comment));
+
+  for (let i = 0; i < newData2.length; i++) {
+    const data = moment(newData2[i].createdAt).fromNow();
+    newData2[i].timeLine = data;
+  }
+
+  res.status(200).json({
+    status: true,
+    msg: "war resources comment listing successfully.......",
+    newData,
+    newData2,
   });
 };
 

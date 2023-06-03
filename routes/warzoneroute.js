@@ -8,6 +8,7 @@ const {
   updateWarzone,
   warReview,
   warRscsReview,
+  warRscsComment,
 } = require("../controller/warzonecontroller");
 const router = express.Router();
 
@@ -16,6 +17,7 @@ router.get("/get/warzone", warZone_list);
 router.get("/get/all/warzone", getAllWar);
 router.get("/get/review/warzone/:id", warReview);
 router.get("/get/single/warzone/:id", getWarDetail);
+router.get("/get/comment/warzone/:id", warRscsComment);
 router.get("/get/allreview/warzone/resource/:id", warRscsReview);
 router.delete("/delete/warzone/:id", deleteWarzone);
 router.put("/update/warzone/:id", updateWarzone);
