@@ -65,10 +65,32 @@ exports.getAllWar = async (req, res) => {
       .populate("resource1")
       .populate("resource2")
       .sort({ createdAt: -1 });
+
+    const dataNew = JSON.parse(JSON.stringify(data));
+    for (let i = 0; i < dataNew.length; i++) {
+      const rsc1Comm = await Comment.find({
+        submitresrcId: dataNew[i].resource1._id,
+      });
+      const sumOfRatingsrsc1 = rsc1Comm.reduce((total, comment) => {
+        return total + comment.rating;
+      }, 0);
+      const rsc1AvReview = sumOfRatingsrsc1 / rsc1Comm.length;
+      dataNew[i].resource1.ava_rating = rsc1AvReview;
+
+      const rsc2Comm = await Comment.find({
+        submitresrcId: dataNew[i].resource2._id,
+      });
+      const sumOfRatingsrsc2 = rsc2Comm.reduce((total, comment) => {
+        return total + comment.rating;
+      }, 0);
+      const rsc2AvReview = sumOfRatingsrsc2 / rsc2Comm.length;
+      dataNew[i].resource2.ava_rating = rsc2AvReview;
+    }
+
     res.status(200).json({
       status: true,
       msg: "all war listing successfully.......",
-      war: data,
+      war: dataNew,
     });
   } catch (error) {
     res.status(400).json({
@@ -321,3 +343,37 @@ cron.schedule("0 0 * * *", async () => {
     }
   }
 });
+
+exports.warRscsReviewAll = async (req, res) => {
+  const war = await WarZone.find({ isHomePage: true });
+
+  for (let i = 0; i < war.length; i++) {
+    const rcs1Comment = await Comment.find({
+      submitresrcId: war[i].resource1,
+    });
+    const sumOfRatingsrsc1 = rcs1Comment.reduce((total, comment) => {
+      return total + comment.rating;
+    }, 0);
+    const rsc1AvReview = sumOfRatingsrsc1 / rcs1Comment.length;
+
+    const rcs2Comment = await Comment.find({
+      submitresrcId: war[i].resource2,
+    });
+    const sumOfRatingsrsc2 = rcs2Comment.reduce((total, comment) => {
+      return total + comment.rating;
+    }, 0);
+
+    const rsc2AvReview = sumOfRatingsrsc2 / rcs2Comment.length;
+  }
+
+  res.status(200).json({
+    status: true,
+    msg: "war updated successfully.......",
+    rsc1AvReview,
+    rsc2AvReview,
+    toalRsc1: rcs1Comment.length,
+    toalRsc2: rcs2Comment.length,
+    rsc1Comment: rcs1Comment,
+    rsc2Comment: rcs2Comment,
+  });
+};
