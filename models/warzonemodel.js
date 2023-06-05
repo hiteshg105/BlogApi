@@ -15,6 +15,10 @@ const warSchema = new Schema(
       type: mongoose.Schema.Types.ObjectId,
       ref: "submitRsrc",
     },
+    category: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "category",
+    },
     title: {
       type: String,
     },
