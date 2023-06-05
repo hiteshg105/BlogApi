@@ -27,6 +27,7 @@ exports.warZone_list = async (req, res) => {
     let data = WarZone.find()
       .populate("resource1")
       .populate("resource2")
+      .populate("category")
       .sort({ createdAt: -1 });
     const page = parseInt(req.query.page) || 1;
     const pageSize = parseInt(req.query.limit) || 20;
@@ -35,6 +36,29 @@ exports.warZone_list = async (req, res) => {
     const totalPages = Math.ceil(total / pageSize);
     data = data.skip(skip).limit(pageSize);
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    
+
     if (page > totalPages) {
       return res.status(201).json({
         success: false,
@@ -42,13 +66,44 @@ exports.warZone_list = async (req, res) => {
       });
     }
     const result = await data;
+
+
+
+
+    const categoryTitles = {};
+
+    // Iterate over the data array
+    result.forEach((item) => {
+      const categoryTitle = item.category.title;
+      
+      // Check if the category title is already a key in the categoryTitles object
+      if (categoryTitles.hasOwnProperty(categoryTitle)) {
+        // If the key exists, push the current item into the array associated with the category title
+        categoryTitles[categoryTitle].push(item);
+      } else {
+        // If the key doesn't exist, create a new array with the current item and assign it to the key
+        categoryTitles[categoryTitle] = [item];
+      }
+    });
+    
+    // Convert the object of arrays into an array of arrays
+    const result1 = Object.values(categoryTitles);
+    
+    // Print the result
+    console.log(result1);
+
+
+
+
+
+
     res.status(200).send({
       success: true,
       message: "warzone listing successfully....",
       count: result.length,
       page,
       totalPages,
-      data: result,
+      data: result1,
     });
   } catch (error) {
     console.log(error);
