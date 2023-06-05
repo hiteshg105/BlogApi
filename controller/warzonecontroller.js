@@ -64,7 +64,7 @@ exports.warZone_list = async (req, res) => {
     }
     const categoryTitles = {};
     dataNew.forEach((item) => {
-      const categoryTitle = item.category.title;
+      const categoryTitle = item.category?.title;
 
       if (categoryTitles.hasOwnProperty(categoryTitle)) {
         categoryTitles[categoryTitle].push(item);
