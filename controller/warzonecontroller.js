@@ -63,7 +63,7 @@ exports.warZone_list = async (req, res) => {
       dataNew[i].resource2.ava_rating = rsc2AvReview;
     }
     const categoryTitles = {};
-    result.forEach((item) => {
+    dataNew.forEach((item) => {
       const categoryTitle = item.category.title;
 
       if (categoryTitles.hasOwnProperty(categoryTitle)) {
