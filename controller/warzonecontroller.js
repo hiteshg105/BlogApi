@@ -35,30 +35,6 @@ exports.warZone_list = async (req, res) => {
     const total = await WarZone.countDocuments();
     const totalPages = Math.ceil(total / pageSize);
     data = data.skip(skip).limit(pageSize);
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-    
-
     if (page > totalPages) {
       return res.status(201).json({
         success: false,
@@ -66,41 +42,41 @@ exports.warZone_list = async (req, res) => {
       });
     }
     const result = await data;
+    const dataNew = JSON.parse(JSON.stringify(result));
+    for (let i = 0; i < dataNew.length; i++) {
+      const rsc1Comm = await Comment.find({
+        submitresrcId: dataNew[i].resource1._id,
+      });
+      const sumOfRatingsrsc1 = rsc1Comm.reduce((total, comment) => {
+        return total + comment.rating;
+      }, 0);
+      const rsc1AvReview = sumOfRatingsrsc1 / rsc1Comm.length;
+      dataNew[i].resource1.ava_rating = rsc1AvReview;
 
-
-
-
+      const rsc2Comm = await Comment.find({
+        submitresrcId: dataNew[i].resource2._id,
+      });
+      const sumOfRatingsrsc2 = rsc2Comm.reduce((total, comment) => {
+        return total + comment.rating;
+      }, 0);
+      const rsc2AvReview = sumOfRatingsrsc2 / rsc2Comm.length;
+      dataNew[i].resource2.ava_rating = rsc2AvReview;
+    }
     const categoryTitles = {};
-
-    // Iterate over the data array
-    result.forEach((item) => {
+    dataNew.forEach((item) => {
       const categoryTitle = item.category.title;
-      
-      // Check if the category title is already a key in the categoryTitles object
+
       if (categoryTitles.hasOwnProperty(categoryTitle)) {
-        // If the key exists, push the current item into the array associated with the category title
         categoryTitles[categoryTitle].push(item);
       } else {
-        // If the key doesn't exist, create a new array with the current item and assign it to the key
         categoryTitles[categoryTitle] = [item];
       }
     });
-    
-    // Convert the object of arrays into an array of arrays
     const result1 = Object.values(categoryTitles);
-    
-    // Print the result
-    console.log(result1);
-
-
-
-
-
-
     res.status(200).send({
       success: true,
       message: "warzone listing successfully....",
-      count: result.length,
+      count: result1.length,
       page,
       totalPages,
       data: result1,
