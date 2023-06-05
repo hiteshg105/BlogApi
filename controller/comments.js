@@ -3,6 +3,7 @@ const resp = require("../helpers/apiResponse");
 const User = require("../models/user");
 var _ = require("lodash");
 const Submit = require("../models/submit_resrc");
+const calculateRating = require("../models/calculatateRatingCount")
 
 // const cloudinary = require("cloudinary").v2;
 // const fs = require("fs");
@@ -10,50 +11,139 @@ const Blogcomment = require("../models/blog_comnt");
 const CurrntMonth = require("../models/currentMonth");
 
 exports.add_Comment = async (req, res) => {
-  const { submitresrcId, userid, comment, rating, status } = req.body;
+  // const { submitresrcId, userid, comment, rating, status } = req.body;
 
-  const newComment = new Comment({
-    submitresrcId: submitresrcId,
-    userid: userid,
-    //  desc:desc,
-    comment: comment,
-    rating: rating,
-    status: "Deactive",
-  });
+  // const newComment = new Comment({
+  //   submitresrcId: submitresrcId,
+  //   userid: userid,
+  //   //  desc:desc,
+  //   comment: comment,
+  //   rating: rating,
+  //   status: "Deactive",
+  // });
 
-  const getuserid = await Submit.findOne({ _id: req.body.submitresrcId });
-  const getuserdetail = getuserid.userid;
-  const findexist = await Comment.findOne({
-    $and: [
-      { submitresrcId: req.body.submitresrcId },
-      { userid: req.body.userid },
-    ],
-  });
+  // const getuserid = await Submit.findOne({ _id: req.body.submitresrcId });
+  // const getuserdetail = getuserid.userid;
+  // const findexist = await Comment.findOne({
+  //   $and: [
+  //     { submitresrcId: req.body.submitresrcId },
+  //     { userid: req.body.userid },
+  //   ],
+  // });
 
-  //const findsts = findexist.status
-  //console.log("FIND",findsts)
+  // //const findsts = findexist.status
+  // //console.log("FIND",findsts)
 
-  //console.log("STRING",getuserid)
-  if (getuserdetail == userid) {
-    // const getuserdetail = getuserid.userid
-    // console.log("user",getuserdetail)
-    // const alreadyexist = await Comment.findOne({userid:getuserdetail})
-    res.status(201).json({
-      status: false,
-      msg: "not able to comment",
+  // //console.log("STRING",getuserid)
+  // if (getuserdetail == userid) {
+  //   // const getuserdetail = getuserid.userid
+  //   // console.log("user",getuserdetail)
+  //   // const alreadyexist = await Comment.findOne({userid:getuserdetail})
+  //   res.status(201).json({
+  //     status: false,
+  //     msg: "not able to comment",
+  //   });
+  // } else if (findexist?.status == "Active") {
+  //   resp.alreadyr(res);
+  // } else if (findexist?.status == "Deactive") {
+  //   res.status(200).json({
+  //     status: true,
+  //     msg: "waiting for admin approvel",
+  //   });
+  // } else {
+  //   newComment
+  //     .save()
+  //     .then((data) => resp.successr(res, data))
+  //     .catch((error) => resp.errorr(res, error));
+  // }
+
+
+  try {
+    // console.log("lukhesh")
+    const getuserid = await Submit.findOne({ _id: req.body.submitresrcId });
+    const getuserdetail = getuserid.userid;
+    const findexist = await Comment.findOne({
+      $and: [
+        { submitresrcId: req.body.submitresrcId },
+        { userid: req.body.userid },
+      ],
     });
-  } else if (findexist?.status == "Active") {
-    resp.alreadyr(res);
-  } else if (findexist?.status == "Deactive") {
-    res.status(200).json({
-      status: true,
-      msg: "waiting for admin approvel",
-    });
-  } else {
-    newComment
-      .save()
-      .then((data) => resp.successr(res, data))
-      .catch((error) => resp.errorr(res, error));
+    if (getuserdetail == req.body.userid) {
+      res.status(201).json({
+        status: false,
+        msg: "not able to comment",
+      });
+    } else if (findexist?.status == "Active") {
+      // console.log("hello2")
+      resp.alreadyr(res);
+    } else if (findexist?.status == "Deactive") {
+      // console.log("hello3")
+      res.status(200).json({
+        status: true,
+        msg: "waiting for admin approvel",
+      });
+    } else {
+      // console.log("hello4")
+      const newComment = await Comment.create({
+        submitresrcId: req.body.submitresrcId,
+        userid: req.body.userid,
+        comment: req.body.comment,
+        rating: req.body.rating,
+        status: "Deactive"
+      })
+
+      const userData = await Submit.findOne({ _id: req.body.submitresrcId })
+      const userDate2 = await calculateRating.findOne({ userid: req.body.userid })
+      const checkUserId = await calculateRating.findOne({ userid: JSON.parse(JSON.stringify(userData.userid)) })
+      if (checkUserId) {
+        const id = checkUserId._id
+        const info = {
+          rating: newComment.rating ? checkUserId.rating + 2 : checkUserId.rating,
+          comment: newComment.comment ? checkUserId.comment + 2 : newComment.comment
+        }
+        const add_Comment = await calculateRating.findByIdAndUpdate(id, info, {
+          new: true,
+          runValidators: true,
+          userFindAndModify: true,
+        })
+      } else {
+        const info = {
+          userid: JSON.parse(JSON.stringify(userData.userid)),
+          rating: newComment.rating ? 2 : 0,
+          comment: newComment.comment ? 2 : 0
+        }
+        const add_Comment = await calculateRating.create(info)
+      }
+      if (userDate2) {
+        const id = userDate2._id
+        const info = {
+          rating: newComment.rating ? userDate2.rating + 2 : userDate2.rating,
+          comment: newComment.comment ? userDate2.comment + 2 : userDate2.comment
+        }
+        const add_Comment = await calculateRating.findByIdAndUpdate(id, info, {
+          new: true,
+          runValidators: true,
+          userFindAndModify: true,
+        })
+      } else {
+        const info = {
+          userid: req.body.userid
+          ,
+          rating: newComment.rating ? 2 : 0,
+          comment: newComment.comment ? 2 : 0
+        }
+        const add_Comment = await calculateRating.create(info)
+      }
+
+      res.status(200).json({
+        status: true,
+        msg: "comment create succesfully",
+        data: newComment
+      });
+    }
+  } catch (error) {
+    console.log(error)
+    res.status(400).send(error);
   }
 };
 
@@ -642,3 +732,19 @@ exports.crntMonth = async (req, res) => {
     data: getdatail,
   });
 };
+
+
+
+exports.userCalculate = async (req, res) => {
+  try {
+    const data = await calculateRating.findOne({ userid: req.params.id })
+    res.status(200).json({
+      status: true,
+      msg: "success",
+      data: data,
+    });
+  } catch (error) {
+    console.log(error)
+    res.status(400).send(error);
+  }
+}
