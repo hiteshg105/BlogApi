@@ -19,6 +19,7 @@ const {
   average_rating,
   editCommentbyUser,
   crntMonth,
+  userCalculate,
 } = require("../controller/comments");
 
 router.post("/user/add_Comment", add_Comment);
@@ -40,5 +41,6 @@ router.get("/user/filterByRating/:id", filterByRating);
 router.get("/user/average_rating/:id", average_rating);
 router.post("/user/editCommentbyUser/:id", editCommentbyUser);
 router.get("/user/crntMonth", crntMonth);
+router.get("/user/user_calculate/:id", userCalculate);
 
 module.exports = router;
