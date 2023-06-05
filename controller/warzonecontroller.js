@@ -64,6 +64,7 @@ exports.getAllWar = async (req, res) => {
     })
       .populate("resource1")
       .populate("resource2")
+      .populate("category")
       .sort({ createdAt: -1 });
 
     const dataNew = JSON.parse(JSON.stringify(data));
