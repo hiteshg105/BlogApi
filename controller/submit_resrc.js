@@ -293,16 +293,50 @@ exports.user_sub_res_lsit = async (req, res) => {
 };
 
 exports.active_resrc_lsit = async (req, res) => {
-  await Submit.find({ $and: [{ usertype: "user" }, { aprv_status: "Active" }] })
-    .populate("category")
-    .populate("language")
-    .sort({ createdAt: -1 })
-    .populate("category")
-    .populate("sub_category")
-    .populate("relYear")
-    .populate("userid")
-    .then((data) => resp.successr(res, data))
-    .catch((error) => resp.errorr(res, error));
+  try {
+    let data = Submit.find({ $and: [{ usertype: "user" }, { aprv_status: "Active" }] })
+      .populate("category")
+      .populate("language")
+      // .sort({ createdAt: -1 })
+      .populate("category")
+      .populate("sub_category")
+      .populate("relYear")
+      .populate("userid")
+
+
+    const page = parseInt(req.query.page) || 1;
+    const pageSize = parseInt(req.query.limit) || 9;
+    const skip = (page - 1) * pageSize;
+    const total = await Submit.countDocuments();
+    const totalPages = Math.ceil(total / pageSize);
+    data = data.skip(skip).limit(pageSize);
+    if (page > totalPages) {
+      return res.status(201).json({
+        success: false,
+        massage: "No data found",
+      });
+    }
+    const result = await data;
+
+
+
+
+    res.status(200).send({
+      success: true,
+      message: "Content Creteor listing successfully....",
+      count: result.length,
+      page,
+      totalPages,
+      data: result,
+    });
+  } catch (error) {
+    console.log(error)
+    res.status(400).json({
+      status: false,
+      msg: "Something Went wrong",
+    });
+  }
+
 };
 
 exports.admin_sub_res_lsit = async (req, res) => {

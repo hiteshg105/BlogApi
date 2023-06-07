@@ -1,35 +1,69 @@
 const express = require("express");
 const router = express.Router();
+// const multer = require("multer");
+// const fs = require("fs");
+const { App_Creator_content, getAllContentCreator } = require("../controller/resrc_creator");
+
+// if (!fs.existsSync("./uploads")) {
+//   fs.mkdirSync("./uploads");
+// }
+
+// const storage = multer.diskStorage({
+//   destination: function (req, file, cb) {
+//     cb(null, "./uploads");
+//   },
+//   filename: function (req, file, cb) {
+//     const uniqueSuffix = Date.now() + "-" + Math.round(Math.random() * 1e9);
+//     cb(null, file.fieldname + "-" + uniqueSuffix);
+//   },
+// });
+
+// let uploads = multer({ storage: storage });
+
+// let multipleUpload = uploads.fields([
+//   { name: "img", maxCount: 1 },
+
+//   //   { name: "storepan_img", maxCount: 5 },
+// ]);
+
+const path = require("path");
 const multer = require("multer");
-const fs = require("fs");
-const { App_Creator_content } = require("../controller/resrc_creator");
 
-if (!fs.existsSync("./uploads")) {
-  fs.mkdirSync("./uploads");
-}
-
-const storage = multer.diskStorage({
-  destination: function (req, file, cb) {
-    cb(null, "./uploads");
+var storage = multer.diskStorage({
+  destination: function (req, res, cb) {
+    cb(null, "uploads/");
   },
   filename: function (req, file, cb) {
-    const uniqueSuffix = Date.now() + "-" + Math.round(Math.random() * 1e9);
-    cb(null, file.fieldname + "-" + uniqueSuffix);
+    let ext = path.extname(file.originalname);
+    cb(null, Date.now() + ext);
   },
 });
 
-let uploads = multer({ storage: storage });
+var upload = multer({
+  storage: storage,
+  fileFilter: function (req, file, cb) {
+    if (!file.originalname.match(/\.(mp4|webp|webm|MPEG-4|mkv|mov|png|jpg|jpeg|pdf|doc|docx)$/)) {
+      return cb(new Error("Please upload a image"));
+    }
+    cb(undefined, true);
+  },
+});
 
-let multipleUpload = uploads.fields([
-  { name: "img", maxCount: 1 },
 
-  //   { name: "storepan_img", maxCount: 5 },
-]);
+
+
 
 router.post(
   "/user/content/creator",
-  uploads.single("img"),
+  upload.single("img"),
   App_Creator_content
+);
+
+
+router.get(
+  "/get_all/content/creator",
+
+  getAllContentCreator
 );
 
 module.exports = router;

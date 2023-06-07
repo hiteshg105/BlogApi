@@ -47,6 +47,7 @@ const contentCreator = require("./routes/resrc_Creator");
 //console
 
 //use
+app.use("/uploads", express.static("uploads"));
 app.use("/", user);
 app.use("/", category);
 app.use("/", subcategory);
