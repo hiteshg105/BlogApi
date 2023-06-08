@@ -2,7 +2,7 @@ const express = require("express");
 const router = express.Router();
 // const multer = require("multer");
 // const fs = require("fs");
-const { App_Creator_content, getAllContentCreator } = require("../controller/resrc_creator");
+const { App_Creator_content, getAllContentCreator, getSingleContentCreatorData } = require("../controller/resrc_creator");
 
 // if (!fs.existsSync("./uploads")) {
 //   fs.mkdirSync("./uploads");
@@ -64,6 +64,12 @@ router.get(
   "/get_all/content/creator",
 
   getAllContentCreator
+);
+
+
+router.get(
+  "/content/creator/get_single_content_data/:id",
+  getSingleContentCreatorData
 );
 
 module.exports = router;
