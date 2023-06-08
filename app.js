@@ -43,6 +43,7 @@ const treanding = require("./routes/treanding");
 const mail = require("./routes/mail");
 const warzone = require("./routes/warzoneroute");
 const contentCreator = require("./routes/resrc_Creator");
+const creatorComment = require("./routes/creatorComment");
 
 //console
 
@@ -72,6 +73,7 @@ app.use("/", treanding);
 app.use("/", mail);
 app.use("/", warzone);
 app.use("/", contentCreator);
+app.use("/", creatorComment);
 
 app.get("/", (req, res) => {
   res.send("Hello World!");

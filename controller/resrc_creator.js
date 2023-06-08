@@ -1,4 +1,5 @@
 const { uploadBase64ImageFile } = require("../helpers/awsuploader");
+const creatorComment = require("../models/creatorComment");
 const ResCreator = require("../models/resrc_creator");
 
 
@@ -124,6 +125,32 @@ exports.getAllContentCreator = async (req, res) => {
       page,
       totalPages,
       data: result,
+    });
+  } catch (error) {
+    console.log(error)
+    res.status(400).json({
+      status: false,
+      msg: "Something Went wrong",
+    });
+  }
+}
+
+
+
+exports.getSingleContentCreatorData = async (req, res) => {
+  try {
+    const id = req.params.id;
+    const singleContentCreatorData = await ResCreator.findById(id)
+    const commentData = await creatorComment.find({ creatorResrcId: id }).populate("userid")
+    const sumOfRatings = commentData.reduce((sum, item) => sum + item.rating, 0);
+    const averageRating = sumOfRatings / commentData.length;
+    let newData = JSON.parse(JSON.stringify(singleContentCreatorData))
+    newData.comment = commentData;
+    newData.avarageRating  = averageRating
+    res.status(200).send({
+      success: true,
+      message: "Content Creteor listing successfully....",
+      data: newData,
     });
   } catch (error) {
     console.log(error)
