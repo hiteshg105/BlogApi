@@ -146,7 +146,7 @@ exports.getSingleContentCreatorData = async (req, res) => {
     const averageRating = sumOfRatings / commentData.length;
     let newData = JSON.parse(JSON.stringify(singleContentCreatorData))
     newData.comment = commentData;
-    newData.avarageRating  = averageRating
+    newData.avarageRating = averageRating
     res.status(200).send({
       success: true,
       message: "Content Creteor listing successfully....",
@@ -160,3 +160,61 @@ exports.getSingleContentCreatorData = async (req, res) => {
     });
   }
 }
+
+
+
+
+exports.search_topic_title_content_creator = async (req, res) => {
+  try {
+    const { searchinput } = req.body;
+    const data = await ResCreator.find({ topics: { $regex: searchinput, $options: "i" } })
+      .find({ status: "Active" })
+      .populate("language")
+
+    res.status(200).json({
+      status: true,
+      data: data,
+    });
+  } catch (error) {
+    res.status(400).json({
+      status: false,
+      msg: "error",
+      error: error,
+    });
+  }
+};
+
+exports.keyword_search_filter = async (req, res) => {
+  try {
+    const { searchinput } = req.body;
+    let query = {};
+    if (req.body.type) {
+      query.type = req.body.type;
+      // where.push({type: req.query.type})
+    }
+    if (req.body.format) {
+      query.format = req.body.format;
+    }
+    if (req.body.language) {
+      query.language = req.body.language;
+    }
+    const data = await ResCreator.find({ topics: { $regex: searchinput, $options: "i" } })
+      .find({ status: "Active" })
+      .find(query)
+      .populate("category")
+      .populate("sub_category")
+      .populate("language")
+    res.status(200).json({
+      status: true,
+      message: "find successfully",
+      data: data,
+    });
+  } catch (error) {
+    console.log(error)
+    res.status(400).json({
+      status: false,
+      msg: "error",
+      error: error,
+    });
+  }
+};
