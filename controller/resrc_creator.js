@@ -2,7 +2,6 @@ const { uploadBase64ImageFile } = require("../helpers/awsuploader");
 const creatorComment = require("../models/creatorComment");
 const ResCreator = require("../models/resrc_creator");
 
-
 // function detectMimeType(b64) {
 //   for (var s in signatures) {
 //     if (b64.indexOf(s) === 0) {
@@ -11,11 +10,9 @@ const ResCreator = require("../models/resrc_creator");
 //   }
 // }
 
-
-
 exports.App_Creator_content = async (req, res) => {
   try {
-    console.log(req.file.path, "first")
+    console.log(req.file.path, "first");
     const {
       userid,
       link,
@@ -32,7 +29,6 @@ exports.App_Creator_content = async (req, res) => {
       comment,
       language,
     } = req.body;
-
 
     let newSubmit = await ResCreator.create({
       userid,
@@ -55,15 +51,12 @@ exports.App_Creator_content = async (req, res) => {
     res.status(200).json({
       success: true,
       data: newSubmit,
-      message: "Content Crete Successfully.."
+      message: "Content Crete Successfully..",
     });
   } catch (error) {
     res.status(400).send(error);
   }
-
 };
-
-
 
 //get All resouces Creator
 exports.getAllContentCreator = async (req, res) => {
@@ -72,7 +65,7 @@ exports.getAllContentCreator = async (req, res) => {
       .populate("userid")
       .populate("sub_category")
       .populate("category")
-      .populate("language")
+      .populate("language");
 
     const page = parseInt(req.query.page) || 1;
     const pageSize = parseInt(req.query.limit) || 9;
@@ -127,49 +120,51 @@ exports.getAllContentCreator = async (req, res) => {
       data: result,
     });
   } catch (error) {
-    console.log(error)
+    console.log(error);
     res.status(400).json({
       status: false,
       msg: "Something Went wrong",
     });
   }
-}
-
-
+};
 
 exports.getSingleContentCreatorData = async (req, res) => {
   try {
     const id = req.params.id;
-    const singleContentCreatorData = await ResCreator.findById(id)
-    const commentData = await creatorComment.find({ creatorResrcId: id }).populate("userid")
-    const sumOfRatings = commentData.reduce((sum, item) => sum + item.rating, 0);
+    const singleContentCreatorData = await ResCreator.findById(id);
+    const commentData = await creatorComment
+      .find({ creatorResrcId: id })
+      .populate("userid");
+    const sumOfRatings = commentData.reduce(
+      (sum, item) => sum + item.rating,
+      0
+    );
     const averageRating = sumOfRatings / commentData.length;
-    let newData = JSON.parse(JSON.stringify(singleContentCreatorData))
+    let newData = JSON.parse(JSON.stringify(singleContentCreatorData));
     newData.comment = commentData;
-    newData.avarageRating = averageRating
+    newData.avarageRating = averageRating;
     res.status(200).send({
       success: true,
       message: "Content Creteor listing successfully....",
       data: newData,
     });
   } catch (error) {
-    console.log(error)
+    console.log(error);
     res.status(400).json({
       status: false,
       msg: "Something Went wrong",
     });
   }
-}
-
-
-
+};
 
 exports.search_topic_title_content_creator = async (req, res) => {
   try {
     const { searchinput } = req.body;
-    const data = await ResCreator.find({ topics: { $regex: searchinput, $options: "i" } })
+    const data = await ResCreator.find({
+      topics: { $regex: searchinput, $options: "i" },
+    })
       .find({ status: "Active" })
-      .populate("language")
+      .populate("language");
 
     res.status(200).json({
       status: true,
@@ -198,23 +193,58 @@ exports.keyword_search_filter = async (req, res) => {
     if (req.body.language) {
       query.language = req.body.language;
     }
-    const data = await ResCreator.find({ topics: { $regex: searchinput, $options: "i" } })
+    const data = await ResCreator.find({
+      topics: { $regex: searchinput, $options: "i" },
+    })
       .find({ status: "Active" })
       .find(query)
       .populate("category")
       .populate("sub_category")
-      .populate("language")
+      .populate("language");
     res.status(200).json({
       status: true,
       message: "find successfully",
       data: data,
     });
   } catch (error) {
-    console.log(error)
+    console.log(error);
     res.status(400).json({
       status: false,
       msg: "error",
       error: error,
+    });
+  }
+};
+
+exports.updateContent = async (req, res) => {
+  try {
+    const data = await ResCreator.findByIdAndUpdate(req.params.id, req.body);
+    res.status(200).json({
+      status: true,
+      message: "update successfully",
+      data: data,
+    });
+  } catch (error) {
+    console.log(error);
+    res.status(400).json({
+      status: false,
+      msg: "error",
+    });
+  }
+};
+
+//delete content
+exports.deleteContent = async (req, res) => {
+  try {
+    const data = await ResCreator.findByIdAndDelete(req.params.id);
+    res.status(200).json({
+      status: true,
+      message: "delete successfully",
+    });
+  } catch (error) {
+    res.status(400).json({
+      status: false,
+      msg: "error",
     });
   }
 };

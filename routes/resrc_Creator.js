@@ -2,7 +2,14 @@ const express = require("express");
 const router = express.Router();
 // const multer = require("multer");
 // const fs = require("fs");
-const { App_Creator_content, getAllContentCreator, getSingleContentCreatorData, search_topic_title_content_creator } = require("../controller/resrc_creator");
+const {
+  App_Creator_content,
+  getAllContentCreator,
+  getSingleContentCreatorData,
+  search_topic_title_content_creator,
+  updateContent,
+  deleteContent,
+} = require("../controller/resrc_creator");
 
 // if (!fs.existsSync("./uploads")) {
 //   fs.mkdirSync("./uploads");
@@ -42,23 +49,18 @@ var storage = multer.diskStorage({
 var upload = multer({
   storage: storage,
   fileFilter: function (req, file, cb) {
-    if (!file.originalname.match(/\.(mp4|webp|webm|MPEG-4|mkv|mov|png|jpg|jpeg|pdf|doc|docx)$/)) {
+    if (
+      !file.originalname.match(
+        /\.(mp4|webp|webm|MPEG-4|mkv|mov|png|jpg|jpeg|pdf|doc|docx)$/
+      )
+    ) {
       return cb(new Error("Please upload a image"));
     }
     cb(undefined, true);
   },
 });
 
-
-
-
-
-router.post(
-  "/user/content/creator",
-  upload.single("img"),
-  App_Creator_content
-);
-
+router.post("/user/content/creator", upload.single("img"), App_Creator_content);
 
 router.get(
   "/get_all/content/creator",
@@ -66,15 +68,17 @@ router.get(
   getAllContentCreator
 );
 
-
 router.get(
   "/content/creator/get_single_content_data/:id",
   getSingleContentCreatorData
 );
 
-
 router.get(
   "/content/search_topic_title_content_creator",
   search_topic_title_content_creator
 );
+
+router.put("/content/update/admin/:id", updateContent);
+
+router.delete("/content/delete/admin/:id", deleteContent);
 module.exports = router;
