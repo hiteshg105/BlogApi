@@ -1261,7 +1261,7 @@ exports.this_time_karma = async (req, res) => {
   var date = new Date();
   var firstDay = new Date(date.getFullYear(), date.getMonth(), 2);
   var lastDay = new Date(date.getFullYear(), date.getMonth() + 1, 0);
-  console.log("FIRST", firstDay)
+  console.log("", Day)
   console.log("lAST", lastDay)
   //const getplanet = await Planet.find()
   const getdatail = await CurrntMonth.find({

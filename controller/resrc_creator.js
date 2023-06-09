@@ -15,7 +15,7 @@ const ResCreator = require("../models/resrc_creator");
 
 exports.App_Creator_content = async (req, res) => {
   try {
-    console.log(req.file.path, "first")
+    console.log(req.body.link, "first")
     const {
       userid,
       link,
@@ -75,7 +75,7 @@ exports.getAllContentCreator = async (req, res) => {
       .populate("language")
 
     const page = parseInt(req.query.page) || 1;
-    const pageSize = parseInt(req.query.limit) || 9;
+    const pageSize = parseInt(req.query.limit) || 20;
     const skip = (page - 1) * pageSize;
     const total = await ResCreator.countDocuments();
     const totalPages = Math.ceil(total / pageSize);
@@ -141,6 +141,10 @@ exports.getSingleContentCreatorData = async (req, res) => {
   try {
     const id = req.params.id;
     const singleContentCreatorData = await ResCreator.findById(id)
+      .populate("userid")
+      .populate("language")
+      .populate("sub_category")
+      .populate("category")
     const commentData = await creatorComment.find({ creatorResrcId: id }).populate("userid")
     const sumOfRatings = commentData.reduce((sum, item) => sum + item.rating, 0);
     const averageRating = sumOfRatings / commentData.length;
