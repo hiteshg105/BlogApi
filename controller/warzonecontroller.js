@@ -339,7 +339,7 @@ exports.warRscsComment = async (req, res) => {
 };
 
 // get winner
-cron.schedule("0 0 * * *", async () => {
+cron.schedule("*/30 * * * *", async () => {
   const date = new Date();
   date.setUTCHours(0, 0, 0, 0);
   const data = await WarZone.find({
