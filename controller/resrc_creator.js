@@ -12,7 +12,7 @@ const ResCreator = require("../models/resrc_creator");
 
 exports.App_Creator_content = async (req, res) => {
   try {
-    console.log(req.body.link, "first")
+    console.log(req.body.link, "first");
     const {
       userid,
       link,
@@ -80,44 +80,27 @@ exports.getAllContentCreator = async (req, res) => {
       });
     }
     const result = await data;
-    // const dataNew = JSON.parse(JSON.stringify(result));
-    // for (let i = 0; i < dataNew.length; i++) {
-    //   const rsc1Comm = await Comment.find({
-    //     submitresrcId: dataNew[i].resource1._id,
-    //   });
-    //   const sumOfRatingsrsc1 = rsc1Comm.reduce((total, comment) => {
-    //     return total + comment.rating;
-    //   }, 0);
-    //   const rsc1AvReview = sumOfRatingsrsc1 / rsc1Comm.length;
-    //   dataNew[i].resource1.ava_rating = rsc1AvReview;
+    const dataNew = JSON.parse(JSON.stringify(result));
+    for (let i = 0; i < dataNew.length; i++) {
+      const rsc1Comm = await creatorComment.find({
+        creatorResrcId: dataNew[i]._id,
+      });
+      // console.log(rsc1Comm);
+      const sumOfRatingsrsc1 = rsc1Comm.reduce((total, comment) => {
+        return total + comment.rating;
+      }, 0);
+      const rsc1AvReview = sumOfRatingsrsc1 / rsc1Comm.length;
+      dataNew[i].ava_rating = rsc1AvReview;
+      dataNew[i].length = rsc1Comm.length;
+    }
 
-    //   const rsc2Comm = await Comment.find({
-    //     submitresrcId: dataNew[i].resource2._id,
-    //   });
-    //   const sumOfRatingsrsc2 = rsc2Comm.reduce((total, comment) => {
-    //     return total + comment.rating;
-    //   }, 0);
-    //   const rsc2AvReview = sumOfRatingsrsc2 / rsc2Comm.length;
-    //   dataNew[i].resource2.ava_rating = rsc2AvReview;
-    // }
-    // const categoryTitles = {};
-    // dataNew.forEach((item) => {
-    //   const categoryTitle = item.category.title;
-
-    //   if (categoryTitles.hasOwnProperty(categoryTitle)) {
-    //     categoryTitles[categoryTitle].push(item);
-    //   } else {
-    //     categoryTitles[categoryTitle] = [item];
-    //   }
-    // });
-    // const result1 = Object.values(categoryTitles);
     res.status(200).send({
       success: true,
       message: "Content Creteor listing successfully....",
       count: result.length,
       page,
       totalPages,
-      data: result,
+      data: dataNew,
     });
   } catch (error) {
     console.log(error);
@@ -135,9 +118,14 @@ exports.getSingleContentCreatorData = async (req, res) => {
       .populate("userid")
       .populate("language")
       .populate("sub_category")
-      .populate("category")
-    const commentData = await creatorComment.find({ creatorResrcId: id }).populate("userid")
-    const sumOfRatings = commentData.reduce((sum, item) => sum + item.rating, 0);
+      .populate("category");
+    const commentData = await creatorComment
+      .find({ creatorResrcId: id })
+      .populate("userid");
+    const sumOfRatings = commentData.reduce(
+      (sum, item) => sum + item.rating,
+      0
+    );
     const averageRating = sumOfRatings / commentData.length;
     let newData = JSON.parse(JSON.stringify(singleContentCreatorData));
     newData.comment = commentData;
