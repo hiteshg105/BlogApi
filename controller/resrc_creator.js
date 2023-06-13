@@ -250,7 +250,7 @@ exports.advanceContentfilter = async (req, res) => {
   if (req.query.language) {
     query.language = req.query.language;
   }
-  let blogs = await ResCreator.find({ status: "Active" })
+  let blogs = await Submit.find({ status: "Active" })
     .find(query)
     .populate("sub_category")
     .populate("category")
