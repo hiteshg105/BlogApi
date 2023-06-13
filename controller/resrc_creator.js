@@ -253,7 +253,8 @@ exports.advanceContentfilter = async (req, res) => {
     .find(query)
     .populate("sub_category")
     .populate("category")
-    .populate("language");
+    .populate("language")
+    .populate("userid")
   const dataNew = JSON.parse(JSON.stringify(blogs));
   for (let i = 0; i < dataNew.length; i++) {
     const rsc1Comm = await creatorComment.find({
