@@ -12,40 +12,24 @@ const ResCreator = require("../models/resrc_creator");
 
 exports.App_Creator_content = async (req, res) => {
   try {
-    console.log(req.body.link, "first");
-    const {
-      userid,
-      link,
-      category,
-      sub_category,
-      type,
-      format,
-      topics,
-      desc,
-      resTitle,
-      creatorName,
-      relYear,
-      res_desc,
-      comment,
-      language,
-    } = req.body;
+    // const {
+    //   userid,
+    //   link,
+    //   category,
+    //   sub_category,
+    //   type,
+    //   format,
+    //   topics,
+    //   desc,
+    //   resTitle,
+    //   creatorName,
+    //   relYear,
+    //   res_desc,
+    //   comment,
+    //   language,
+    // } = req.body;
 
-    let newSubmit = await ResCreator.create({
-      userid,
-      link,
-      category,
-      sub_category,
-      type,
-      format,
-      topics,
-      desc,
-      resTitle,
-      creatorName,
-      relYear,
-      res_desc,
-      comment,
-      language,
-    });
+    let newSubmit = await ResCreator.create(req.body);
     if (req.file) newSubmit.img = req.file.path;
     await newSubmit.save();
     res.status(200).json({
