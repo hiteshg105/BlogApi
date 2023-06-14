@@ -47,6 +47,8 @@ const creatorComment = require("./routes/creatorComment");
 
 //console
 
+
+
 //use
 app.use("/uploads", express.static("uploads"));
 app.use("/", user);

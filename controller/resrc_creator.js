@@ -220,8 +220,6 @@ exports.deleteContent = async (req, res) => {
   }
 };
 
-
-
 exports.advanceContentfilter = async (req, res) => {
   let query = {};
   let where = {};
@@ -235,13 +233,29 @@ exports.advanceContentfilter = async (req, res) => {
     query.language = req.query.language;
   }
   let blogs = await ResCreator.find({ status: "Active" })
+
     .find(query)
     .populate("sub_category")
     .populate("category")
     .populate("language")
+    .populate("userid")
+  const dataNew = JSON.parse(JSON.stringify(blogs));
+  for (let i = 0; i < dataNew.length; i++) {
+    const rsc1Comm = await creatorComment.find({
+      creatorResrcId: dataNew[i]._id,
+    });
+    // console.log(rsc1Comm);
+    const sumOfRatingsrsc1 = rsc1Comm.reduce((total, comment) => {
+      return total + comment.rating;
+    }, 0);
+    const rsc1AvReview = sumOfRatingsrsc1 / rsc1Comm.length;
+    dataNew[i].ava_rating = rsc1AvReview;
+    dataNew[i].length = rsc1Comm.length;
+  }
+
   return res.status(200).json({
     message: "blog success",
     success: true,
-    data: blogs,
+    data: dataNew,
   });
 };
