@@ -448,7 +448,6 @@ exports.listbycategory = async (req, res) => {
   const getone = await SubCategory.find({ category: req.params.id })
     .populate("category")
     .sort({ sortorder: 1 });
-  console.log("getone", getone);
 
   if (getone) {
     //  var sublength = getone.length

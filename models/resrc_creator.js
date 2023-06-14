@@ -2,21 +2,13 @@ const mongoose = require("mongoose");
 const Schema = mongoose.Schema;
 const thisSchema = new Schema(
   {
-    creatorName: {
-      type: String,
-    },
-    link: {
-      type: Array,
-    },
+    
     userid: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "user",
     },
-    phoneNo: {
-      type: String,
-    },
-    email: {
-      type: String,
+    link: {
+      type: Array,
     },
     category: {
       type: mongoose.Schema.Types.ObjectId,
@@ -41,10 +33,23 @@ const thisSchema = new Schema(
     topics: {
       type: String,
     },
+   desc: {
+      type: String,
+    },
+
     desc: {
       type: String,
     },
     img: {
+      type: String,
+    },
+    creatorName: {
+      type: String,
+    },
+    phoneNo: {
+      type: String,
+    },
+    email: {
       type: String,
     },
     status: {
