@@ -308,7 +308,6 @@ exports.warRscsReview = async (req, res) => {
 exports.warRscsComment = async (req, res) => {
   const war = await WarZone.findById(req.params.id);
   const rcs1Comment = await Comment.find({
-    status: "Active",
     submitresrcId: war.resource1,
   }).populate("userid");
   const newData = JSON.parse(JSON.stringify(rcs1Comment));
@@ -319,7 +318,6 @@ exports.warRscsComment = async (req, res) => {
   }
 
   const rcs2Comment = await Comment.find({
-    status: "Active",
     submitresrcId: war.resource2,
   }).populate("userid");
 
