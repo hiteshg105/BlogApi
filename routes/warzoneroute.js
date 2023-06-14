@@ -10,6 +10,7 @@ const {
   warRscsReview,
   warRscsComment,
   warRscsReviewAll,
+  getAdminWar,
 } = require("../controller/warzonecontroller");
 const router = express.Router();
 
@@ -23,5 +24,6 @@ router.get("/get/comment/warzone/:id", warRscsComment);
 router.get("/get/allreview/warzone/resource/:id", warRscsReview);
 router.delete("/delete/warzone/:id", deleteWarzone);
 router.put("/update/warzone/:id", updateWarzone);
+router.get("/update/warzone/admin", getAdminWar);
 
 module.exports = router;

@@ -371,8 +371,11 @@ cron.schedule("*/30 * * * *", async () => {
     if (sumOfRatingsrsc1 > sumOfRatingsrsc2) {
       data[i].winner = rcs1Comment[0].submitresrcId;
       await data[i].save();
-    } else {
+    } else if (sumOfRatingsrsc1 < sumOfRatingsrsc2) {
       data[i].winner = rcs2Comment[0].submitresrcId;
+      await data[i].save();
+    } else {
+      data[i].winner = null;
       await data[i].save();
     }
   }
@@ -410,4 +413,54 @@ exports.warRscsReviewAll = async (req, res) => {
     rsc1Comment: rcs1Comment,
     rsc2Comment: rcs2Comment,
   });
+};
+
+// get all war for admin
+
+exports.getAdminWar = async (req, res) => {
+  try {
+    const data = await WarZone.find()
+      .populate("resource1")
+      .populate("resource2")
+      .populate({
+        path: "resource1",
+        populate: {
+          path: "category",
+          model: "category", // Assuming "User" is the model name for the user collection
+        },
+      })
+      .populate({
+        path: "resource1",
+        populate: {
+          path: "sub_category",
+          model: "subcategory", // Assuming "User" is the model name for the user collection
+        },
+      })
+      .populate({
+        path: "resource2",
+        populate: {
+          path: "category",
+          model: "category", // Assuming "User" is the model name for the user collection
+        },
+      })
+      .populate({
+        path: "resource2",
+        populate: {
+          path: "sub_category",
+          model: "subcategory", // Assuming "User" is the model name for the user collection
+        },
+      });
+
+    res.status(200).json({
+      status: true,
+      msg: "war detail listing successfully.......",
+      war: data,
+    });
+  } catch (error) {
+    console.log(error);
+    res.status(400).json({
+      status: false,
+      msg: "Something Went wrong",
+    });
+  }
 };
