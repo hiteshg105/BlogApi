@@ -249,9 +249,15 @@ exports.advanceContentfilter = async (req, res) => {
     dataNew[i].length = rsc1Comm.length;
   }
 
+  const NewSortingData = dataNew.sort((a, b) => {
+    if (a.ava_rating === null) return 1; // Move null values to the end
+    if (b.ava_rating === null) return -1; // Move null values to the end
+    return b.ava_rating - a.ava_rating; // Compare ratings in descending order
+  });
+
   return res.status(200).json({
     message: "blog success",
     success: true,
-    data: dataNew,
+    data: NewSortingData,
   });
 };
