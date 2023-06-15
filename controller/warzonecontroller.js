@@ -102,6 +102,10 @@ exports.getAllWar = async (req, res) => {
     for (let i = 0; i < dataNew.length; i++) {
       const rsc1Comm = await Comment.find({
         submitresrcId: dataNew[i].resource1._id,
+        createdAt: {
+          $lte: dataNew[i].endDate,
+          $gte: dataNew[i].startDate,
+        },
       });
       const sumOfRatingsrsc1 = rsc1Comm.reduce((total, comment) => {
         return total + comment.rating;
@@ -111,6 +115,8 @@ exports.getAllWar = async (req, res) => {
 
       const rsc2Comm = await Comment.find({
         submitresrcId: dataNew[i].resource2._id,
+        $lte: dataNew[i].endDate,
+        $gte: dataNew[i].startDate,
       });
       const sumOfRatingsrsc2 = rsc2Comm.reduce((total, comment) => {
         return total + comment.rating;
