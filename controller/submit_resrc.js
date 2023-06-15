@@ -1437,7 +1437,8 @@ exports.advancefilter = async (req, res) => {
     .populate("sub_category")
     .populate("category")
     .populate("language")
-    .populate("relYear");
+    .populate("relYear")
+    .sort({ava_rating:-1});
   //console.log("blogs",req.query.topics)
   return res.status(200).json({
     message: "blog success",
