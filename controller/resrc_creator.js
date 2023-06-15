@@ -154,10 +154,6 @@ exports.keyword_search_filter = async (req, res) => {
   try {
     const { searchinput } = req.body;
     let query = {};
-    if (req.body.type) {
-      query.type = req.body.type;
-      // where.push({type: req.query.type})
-    }
     if (req.body.format) {
       query.format = req.body.format;
     }

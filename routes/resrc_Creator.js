@@ -10,6 +10,7 @@ const {
   updateContent,
   deleteContent,
   advanceContentfilter,
+  keyword_search_filter,
 } = require("../controller/resrc_creator");
 
 // if (!fs.existsSync("./uploads")) {
@@ -77,6 +78,11 @@ router.get(
 router.get(
   "/content/search_topic_title_content_creator",
   search_topic_title_content_creator
+);
+
+router.post(
+  "/content/keyword_search_filter",
+  keyword_search_filter
 );
 
 router.post(

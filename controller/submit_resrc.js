@@ -1417,12 +1417,6 @@ exports.advancefilter = async (req, res) => {
   if (req.query.sub_category) {
     query.sub_category = req.query.sub_category;
   }
-  //  if (req.query.sub_category) {
-  //   where[req.query.sub_category] = { $regex: req.query.sub_category };
-  //  }
-  // if (req.query.sub_category) {
-  //   req.query.sub_category =  req.query.sub_category
-  //  }
 
   if (req.query.type) {
     query.type = req.query.type;
@@ -1437,33 +1431,6 @@ exports.advancefilter = async (req, res) => {
   if (req.query.relYear) {
     query.relYear = req.query.relYear;
   }
-  // let query =[
-  //   {
-  //     $lookup:
-  //     {
-  //       from: "subcategory",
-  //       localField: "sub_category",
-  //       foreignField: "_id",
-  //       as: "subcategory"
-
-  //     }
-  //   }
-  // ]
-
-  //  if(req.query.type){
-  //   query.type = req.query.type
-  //  // where.push({type: req.query.type})
-  //  }
-  //  if(req.query.format){
-  //     query.format = req.query.format
-  //  }
-  //  if(req.query.language){
-  //   query.language = req.query.language
-  //  }
-  //  if(req.query.relYear){
-  //   query.relYear =req.query.relYear
-  //  }
-
   let blogs = await Submit.find({ aprv_status: "Active" })
     .find(query)
     //.populate("relYear")
@@ -1471,7 +1438,19 @@ exports.advancefilter = async (req, res) => {
     .populate("category")
     .populate("language")
     .populate("relYear");
-  console.log("BLOG", blogs);
+
+    const dataNew = JSON.parse(JSON.stringify(blogs));
+    for (let i = 0; i < dataNew.length; i++) {
+      const rsc1Comm = await creatorComment.find({
+        creatorResrcId: dataNew[i]._id,
+      });
+      const sumOfRatingsrsc1 = rsc1Comm.reduce((total, comment) => {
+        return total + comment.rating;
+      }, 0);
+      const rsc1AvReview = sumOfRatingsrsc1 / rsc1Comm.length;
+      dataNew[i].ava_rating = rsc1AvReview;
+      dataNew[i].length = rsc1Comm.length;
+    }
   //console.log("blogs",req.query.topics)
   return res.status(200).json({
     message: "blog success",
