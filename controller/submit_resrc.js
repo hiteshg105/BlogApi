@@ -1438,19 +1438,6 @@ exports.advancefilter = async (req, res) => {
     .populate("category")
     .populate("language")
     .populate("relYear");
-
-    const dataNew = JSON.parse(JSON.stringify(blogs));
-    for (let i = 0; i < dataNew.length; i++) {
-      const rsc1Comm = await creatorComment.find({
-        creatorResrcId: dataNew[i]._id,
-      });
-      const sumOfRatingsrsc1 = rsc1Comm.reduce((total, comment) => {
-        return total + comment.rating;
-      }, 0);
-      const rsc1AvReview = sumOfRatingsrsc1 / rsc1Comm.length;
-      dataNew[i].ava_rating = rsc1AvReview;
-      dataNew[i].length = rsc1Comm.length;
-    }
   //console.log("blogs",req.query.topics)
   return res.status(200).json({
     message: "blog success",
