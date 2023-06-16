@@ -11,6 +11,7 @@ const {
   deleteContent,
   advanceContentfilter,
   keyword_search_filter,
+  listbysubcategoryCreator,
 } = require("../controller/resrc_creator");
 
 // if (!fs.existsSync("./uploads")) {
@@ -93,4 +94,6 @@ router.post(
 router.put("/content/update/admin/:id", updateContent);
 
 router.delete("/content/delete/admin/:id", deleteContent);
+
+router.get("/admin/list_by_subcategory_creator/:id", listbysubcategoryCreator);
 module.exports = router;

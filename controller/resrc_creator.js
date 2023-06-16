@@ -1,6 +1,7 @@
 const { uploadBase64ImageFile } = require("../helpers/awsuploader");
 const creatorComment = require("../models/creatorComment");
 const ResCreator = require("../models/resrc_creator");
+const SubCategory = require("../models/subcategory");
 
 // function detectMimeType(b64) {
 //   for (var s in signatures) {
@@ -260,4 +261,43 @@ exports.advanceContentfilter = async (req, res) => {
     success: true,
     data: NewSortingData,
   });
+};
+
+
+
+
+exports.listbysubcategoryCreator = async (req, res) => {
+  const getone = await ResCreator.find({
+    $and: [{ sub_category: req.params.id }, { status: "Active" }],
+  })
+    .populate("category")
+    .populate("sub_category")
+    .sort({ sortorder: 1 })
+    .populate("language");
+
+  if (getone) {
+    const finddata = await SubCategory.findOneAndUpdate(
+      {
+        _id: req.params.id,
+      },
+      { $set: { conent_count: getone.length } },
+      { new: true }
+    );
+    // console.log("finddata", finddata);
+    res.status(200).json({
+      status: true,
+      message: "success",
+      count: getone.length,
+      data: getone,
+    });
+  } else {
+    res.status(400).json({
+      status: false,
+      message: "error",
+      error: error,
+    });
+  }
+
+  // .then((data) => resp.successr(res, data))
+  // .catch((error) => resp.errorr(res, error));
 };
