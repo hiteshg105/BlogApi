@@ -14,6 +14,7 @@ exports.add_creator_comment = async (req, res) => {
       userid: req.body.userid,
       creatorResrcId: req.body.creatorResrcId,
     });
+    console.log(userFind)
     if (userFind) {
       res.status(200).json({
         status: false,
