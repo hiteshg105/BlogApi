@@ -223,17 +223,104 @@ exports.getCreatorWarDetail = async (req, res) => {
 
 
 // delete warZone
-exports.deleteWarzone = async (req, res) => {
+exports.deleteCreatorWarzone = async (req, res) => {
     try {
-      await CreatorWarZone.findByIdAndDelete(req.params.id);
-      res.status(200).json({
-        status: true,
-        msg: " war deleted successfully.......",
-      });
+        await CreatorWarZone.findByIdAndDelete(req.params.id);
+        res.status(200).json({
+            status: true,
+            msg: "creator war deleted successfully.......",
+        });
     } catch (error) {
-      res.status(400).json({
-        status: false,
-        msg: "Something Went wrong",
-      });
+        res.status(400).json({
+            status: false,
+            msg: "Something Went wrong",
+        });
     }
-  };
+};
+
+
+
+// update warZone
+exports.updateCreatorWarzone = async (req, res) => {
+    try {
+        await CreatorWarZone.findByIdAndUpdate(req.params.id, req.body);
+        res.status(200).json({
+            status: true,
+            msg: "war updated successfully.......",
+        });
+    } catch (error) {
+        res.status(400).json({
+            status: false,
+            msg: "Something Went wrong",
+        });
+    }
+};
+
+
+
+
+exports.creatoWarReview = async (req, res) => {
+    const war = await CreatorWarZone.findById(req.params.id);
+    const rcs1Comment = await Comment.find({
+        creatorResrcId: war.resource1,
+        createdAt: {
+            $lte: war.endDate,
+            $gte: war.startDate,
+        },
+    });
+    const sumOfRatingsrsc1 = rcs1Comment.reduce((total, comment) => {
+        return total + comment.rating;
+    }, 0);
+    const rsc1AvReview = sumOfRatingsrsc1 / rcs1Comment.length;
+    const rcs2Comment = await Comment.find({
+        creatorResrcId: war.resource2,
+        createdAt: {
+            $lte: war.endDate,
+            $gte: war.startDate,
+        },
+    });
+    const sumOfRatingsrsc2 = rcs2Comment.reduce((total, comment) => {
+        return total + comment.rating;
+    }, 0);
+    const rsc2AvReview = sumOfRatingsrsc2 / rcs2Comment.length;
+    res.status(200).json({
+        status: true,
+        msg: "war updated successfully.......",
+        rsc1AvReview,
+        rsc2AvReview,
+        toalRsc1: rcs1Comment.length,
+        toalRsc2: rcs2Comment.length,
+    });
+};
+
+
+exports.warRscsReview = async (req, res) => {
+    const war = await CreatorWarZone.findById(req.params.id);
+    const rcs1Comment = await Comment.find({
+        creatorResrcId: war.resource1,
+    });
+    const sumOfRatingsrsc1 = rcs1Comment.reduce((total, comment) => {
+        return total + comment.rating;
+    }, 0);
+    const rsc1AvReview = sumOfRatingsrsc1 / rcs1Comment.length;
+
+    const rcs2Comment = await Comment.find({
+        submitresrcId: war.resource2,
+    });
+    const sumOfRatingsrsc2 = rcs2Comment.reduce((total, comment) => {
+        return total + comment.rating;
+    }, 0);
+
+    const rsc2AvReview = sumOfRatingsrsc2 / rcs2Comment.length;
+
+    res.status(200).json({
+        status: true,
+        msg: "war updated successfully.......",
+        rsc1AvReview,
+        rsc2AvReview,
+        toalRsc1: rcs1Comment.length,
+        toalRsc2: rcs2Comment.length,
+        rsc1Comment: rcs1Comment,
+        rsc2Comment: rcs2Comment,
+    });
+};
