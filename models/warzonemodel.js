@@ -32,6 +32,10 @@ const warSchema = new Schema(
     endDate: {
       type: Date,
     },
+    isDeclare: {
+      type: Boolean,
+      default: false,
+    },
   },
   { timestamps: true }
 );

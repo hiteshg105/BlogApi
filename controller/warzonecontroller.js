@@ -343,47 +343,58 @@ exports.warRscsComment = async (req, res) => {
 };
 
 // get winner
-cron.schedule("*/30 * * * *", async () => {
-  const date = new Date();
-  date.setUTCHours(0, 0, 0, 0);
-  const data = await WarZone.find({
-    endDate: date,
-  });
-  for (let i = 0; i < data.length; i++) {
-    const rcs1Comment = await Comment.find({
-      submitresrcId: data[i].resource1,
-      createdAt: {
-        $lte: data[i].endDate,
-        $gte: data[i].startDate,
-      },
+// cron.schedule("*/30 * * * *", async () => {
+exports.declareWinner = async (req, res) => {
+  try {
+    // const date = new Date();
+    // date.setUTCHours(0, 0, 0, 0);
+    const data = await WarZone.find({
+      endDate: { $lte: new Date() },
+      isDeclare: false,
     });
-    // console.log(rcs1Comment, "rcs1Comment");
-    const sumOfRatingsrsc1 = rcs1Comment.reduce((total, comment) => {
-      return total + comment.rating;
-    }, 0);
-    const rcs2Comment = await Comment.find({
-      submitresrcId: data[i].resource2,
-      createdAt: {
-        $lte: data[i].startDate,
-        $gte: data[i].endDate,
-      },
-    });
-    const sumOfRatingsrsc2 = rcs2Comment.reduce((total, comment) => {
-      return total + comment.rating;
-    }, 0);
+    for (let i = 0; i < data.length; i++) {
+      const rcs1Comment = await Comment.find({
+        submitresrcId: data[i].resource1,
+        createdAt: {
+          $lte: data[i].endDate,
+          $gte: data[i].startDate,
+        },
+      });
+      const sumOfRatingsrsc1 = rcs1Comment.reduce((total, comment) => {
+        return total + comment.rating;
+      }, 0);
+      console.log(sumOfRatingsrsc1, "rcs1Comment");
+      const rcs2Comment = await Comment.find({
+        submitresrcId: data[i].resource2,
+        createdAt: {
+          $lte: data[i].startDate,
+          $gte: data[i].endDate,
+        },
+      });
+      const sumOfRatingsrsc2 = rcs2Comment.reduce((total, comment) => {
+        return total + comment.rating;
+      }, 0);
 
-    if (sumOfRatingsrsc1 > sumOfRatingsrsc2) {
-      data[i].winner = rcs1Comment[0].submitresrcId;
-      await data[i].save();
-    } else if (sumOfRatingsrsc1 < sumOfRatingsrsc2) {
-      data[i].winner = rcs2Comment[0].submitresrcId;
-      await data[i].save();
-    } else {
-      data[i].winner = null;
-      await data[i].save();
+      console.log(sumOfRatingsrsc2, "rcs1Comment");
+      if (sumOfRatingsrsc1 > sumOfRatingsrsc2) {
+        data[i].winner = rcs1Comment[0].submitresrcId;
+        data[i].isDeclare = true;
+        await data[i].save();
+      } else if (sumOfRatingsrsc1 < sumOfRatingsrsc2) {
+        data[i].winner = rcs2Comment[0].submitresrcId;
+        data[i].isDeclare = true;
+        await data[i].save();
+      } else {
+        data[i].winner = null;
+        data[i].isDeclare = true;
+        await data[i].save();
+      }
     }
+    res.status(200).send("Winner Declare successfully");
+  } catch (error) {
+    res.status(400).send("error");
   }
-});
+};
 
 exports.warRscsReviewAll = async (req, res) => {
   const war = await WarZone.find({ isHomePage: true });
