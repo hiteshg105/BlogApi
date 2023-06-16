@@ -1,6 +1,19 @@
 const express = require("express");
-const { addCreatorWar, creator_warZone_list, getAllCreatorWar, getCreatorWarDetail, deleteCreatorWarzone, updateCreatorWarzone, creatoWarReview, creatorWarRscsReview, creatorWarRscsComment, CreatorDeclareWinner, creatorWarRscsReviewAll, getAdminWarCreator } = require("../controller/creatroWarzoneController");
 const router = express.Router();
+const { addCreatorWar, 
+    creator_warZone_list, 
+    getAllCreatorWar, 
+    getCreatorWarDetail, 
+    deleteCreatorWarzone, 
+    updateCreatorWarzone, 
+    creatoWarReview, 
+    creatorWarRscsReview, 
+    creatorWarRscsComment, 
+    CreatorDeclareWinner, 
+    creatorWarRscsReviewAll, 
+    getAdminWarCreator
+   } = require("../controller/creatroWarzoneController");
+
 
 router.post("/add/creator_warzone", addCreatorWar);
 router.get("/get/creator_warzone", creator_warZone_list);
