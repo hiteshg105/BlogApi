@@ -172,6 +172,7 @@ exports.getCreatorWarDetail = async (req, res) => {
         const data = await CreatorWarZone.findById(req.params.id)
             .populate("resource1")
             .populate("resource2")
+            .populate("category")
             .populate({
                 path: "resource1",
                 populate: {
@@ -212,22 +213,9 @@ exports.getCreatorWarDetail = async (req, res) => {
                 populate: {
                     path: "language",
                     model: "language", // Assuming "User" is the model name for the user collection
-                },
-            })
-            .populate({
-                path: "resource1",
-                populate: {
-                    path: "relYear",
-                    model: "year", // Assuming "User" is the model name for the user collection
-                },
-            })
-            .populate({
-                path: "resource2",
-                populate: {
-                    path: "relYear",
-                    model: "year", // Assuming "User" is the model name for the user collection
                 },
             });
+
         res.status(200).json({
             status: true,
             msg: "creator war detail listing successfully.......",
