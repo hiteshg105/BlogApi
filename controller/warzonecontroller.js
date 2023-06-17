@@ -24,25 +24,25 @@ exports.addWar = async (req, res) => {
 // get war
 exports.warZone_list = async (req, res) => {
   try {
-    let data = WarZone.find()
+    let  data = await WarZone.find()
       .populate("resource1")
       .populate("resource2")
       .populate("category")
       .sort({ createdAt: -1 });
-    const page = parseInt(req.query.page) || 1;
-    const pageSize = parseInt(req.query.limit) || 20;
-    const skip = (page - 1) * pageSize;
-    const total = await WarZone.countDocuments();
-    const totalPages = Math.ceil(total / pageSize);
-    data = data.skip(skip).limit(pageSize);
-    if (page > totalPages) {
-      return res.status(201).json({
-        success: false,
-        massage: "No data found",
-      });
-    }
-    const result = await data;
-    const dataNew = JSON.parse(JSON.stringify(result));
+    // const page = parseInt(req.query.page) || 1;
+    // const pageSize = parseInt(req.query.limit) || 20;
+    // const skip = (page - 1) * pageSize;
+    // const total = await WarZone.countDocuments();
+    // const totalPages = Math.ceil(total / pageSize);
+    // data = data.skip(skip).limit(pageSize);
+    // if (page > totalPages) {
+    //   return res.status(201).json({
+    //     success: false,
+    //     massage: "No data found",
+    //   });
+    // }
+    // const result = await data;
+    const dataNew = JSON.parse(JSON.stringify(data));
     for (let i = 0; i < dataNew.length; i++) {
       const rsc1Comm = await Comment.find({
         submitresrcId: dataNew[i].resource1._id,
@@ -76,9 +76,7 @@ exports.warZone_list = async (req, res) => {
     res.status(200).send({
       success: true,
       message: "warzone listing successfully....",
-      count: result1.length,
-      page,
-      totalPages,
+     
       data: result1,
     });
   } catch (error) {

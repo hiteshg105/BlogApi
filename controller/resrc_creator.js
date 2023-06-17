@@ -30,14 +30,37 @@ exports.App_Creator_content = async (req, res) => {
     //   language,
     // } = req.body;
 
-    let newSubmit = await ResCreator.create(req.body);
-    if (req.file) newSubmit.img = req.file.path;
-    await newSubmit.save();
-    res.status(200).json({
-      success: true,
-      data: newSubmit,
-      message: "Content Crete Successfully..",
-    });
+    let linkFind = req.body.link;
+    // console.log(linkFind, "linkFind");
+    let foundDocuments;
+    for (let i = 0; i < linkFind.length; i++) {
+      console.log(linkFind[i].length !== 0);
+      if (linkFind[i].length !== 0) {
+        foundDocuments = await ResCreator.findOne({
+          link: { $in: linkFind[i] },
+        });
+      }
+    }
+
+    // console.log(foundDocuments, "foundDocuments");
+    if (foundDocuments) {
+      res.status(200).json({
+        success: false,
+        // data: newSubmit,
+        message: "content creator exists",
+      });
+    } else {
+      let newSubmit = await ResCreator.create(req.body);
+      if (req.file) newSubmit.img = req.file.path;
+      newSubmit.status = "Deactive";
+      await newSubmit.save();
+      res.status(200).json({
+        success: true,
+        data: newSubmit,
+        message: "Content Crete Successfully..",
+      });
+    }
+    // console.log(foundDocuments,"foundDocuments")
   } catch (error) {
     res.status(400).send(error);
   }
@@ -46,26 +69,26 @@ exports.App_Creator_content = async (req, res) => {
 //get All resouces Creator
 exports.getAllContentCreator = async (req, res) => {
   try {
-    let data = ResCreator.find()
+    let data = await ResCreator.find()
       .populate("userid")
       .populate("sub_category")
       .populate("category")
       .populate("language");
 
-    const page = parseInt(req.query.page) || 1;
-    const pageSize = parseInt(req.query.limit) || 20;
-    const skip = (page - 1) * pageSize;
-    const total = await ResCreator.countDocuments();
-    const totalPages = Math.ceil(total / pageSize);
-    data = data.skip(skip).limit(pageSize);
-    if (page > totalPages) {
-      return res.status(201).json({
-        success: false,
-        massage: "No data found",
-      });
-    }
-    const result = await data;
-    const dataNew = JSON.parse(JSON.stringify(result));
+    // const page = parseInt(req.query.page) || 1;
+    // const pageSize = parseInt(req.query.limit) || 20;
+    // const skip = (page - 1) * pageSize;
+    // const total = await ResCreator.countDocuments();
+    // const totalPages = Math.ceil(total / pageSize);
+    // data = data.skip(skip).limit(pageSize);
+    // if (page > totalPages) {
+    //   return res.status(201).json({
+    //     success: false,
+    //     massage: "No data found",
+    //   });
+    // }
+    // const result = await data;
+    const dataNew = JSON.parse(JSON.stringify(data));
     for (let i = 0; i < dataNew.length; i++) {
       const rsc1Comm = await creatorComment.find({
         creatorResrcId: dataNew[i]._id,
@@ -82,9 +105,9 @@ exports.getAllContentCreator = async (req, res) => {
     res.status(200).send({
       success: true,
       message: "Content Creteor listing successfully....",
-      count: result.length,
-      page,
-      totalPages,
+      // count: result.length,
+      // page,
+      // totalPages,
       data: dataNew,
     });
   } catch (error) {
@@ -235,7 +258,7 @@ exports.advanceContentfilter = async (req, res) => {
     .populate("sub_category")
     .populate("category")
     .populate("language")
-    .populate("userid")
+    .populate("userid");
   const dataNew = JSON.parse(JSON.stringify(blogs));
   for (let i = 0; i < dataNew.length; i++) {
     const rsc1Comm = await creatorComment.find({
@@ -262,9 +285,6 @@ exports.advanceContentfilter = async (req, res) => {
     data: NewSortingData,
   });
 };
-
-
-
 
 exports.listbysubcategoryCreator = async (req, res) => {
   const getone = await ResCreator.find({
