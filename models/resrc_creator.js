@@ -54,7 +54,7 @@ const thisSchema = new Schema(
     },
     status: {
       type: String,
-      default: "Active",
+      default: "Deactive",
     },
   },
 
