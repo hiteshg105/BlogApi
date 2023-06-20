@@ -109,7 +109,7 @@ exports.App_Sub_resrc = async (req, res) => {
     language,
     img,
   } = req.body;
-
+  console.log(img);
   //  const coursedetail = await Submit.findOne({ topics:topics });
   // if (coursedetail) {
   //console.log(coursedetail.popularity)
@@ -160,6 +160,7 @@ exports.App_Sub_resrc = async (req, res) => {
   //##############
   if (img) {
     if (img) {
+      console.log(img)
       const base64Data = new Buffer.from(
         img.replace(/^data:image\/\w+;base64,/, ""),
         "base64"
@@ -294,15 +295,16 @@ exports.user_sub_res_lsit = async (req, res) => {
 
 exports.active_resrc_lsit = async (req, res) => {
   try {
-    let data = Submit.find({ $and: [{ usertype: "user" }, { aprv_status: "Active" }] })
+    let data = Submit.find({
+      $and: [{ usertype: "user" }, { aprv_status: "Active" }],
+    })
       .populate("category")
       .populate("language")
       // .sort({ createdAt: -1 })
       .populate("category")
       .populate("sub_category")
       .populate("relYear")
-      .populate("userid")
-
+      .populate("userid");
 
     const page = parseInt(req.query.page) || 1;
     const pageSize = parseInt(req.query.limit) || 9;
@@ -318,9 +320,6 @@ exports.active_resrc_lsit = async (req, res) => {
     }
     const result = await data;
 
-
-
-
     res.status(200).send({
       success: true,
       message: "Content Creteor listing successfully....",
@@ -330,13 +329,12 @@ exports.active_resrc_lsit = async (req, res) => {
       data: result,
     });
   } catch (error) {
-    console.log(error)
+    console.log(error);
     res.status(400).json({
       status: false,
       msg: "Something Went wrong",
     });
   }
-
 };
 
 exports.admin_sub_res_lsit = async (req, res) => {
@@ -1438,7 +1436,7 @@ exports.advancefilter = async (req, res) => {
     .populate("category")
     .populate("language")
     .populate("relYear")
-    .sort({ava_rating:-1});
+    .sort({ ava_rating: -1 });
   //console.log("blogs",req.query.topics)
   return res.status(200).json({
     message: "blog success",

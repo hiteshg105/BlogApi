@@ -12,6 +12,7 @@ const {
   advanceContentfilter,
   keyword_search_filter,
   listbysubcategoryCreator,
+  App_Creator_content_Test,
 } = require("../controller/resrc_creator");
 
 // if (!fs.existsSync("./uploads")) {
@@ -63,7 +64,7 @@ var upload = multer({
   },
 });
 
-router.post("/user/content/creator", upload.single("img"), App_Creator_content);
+router.post("/user/content/creator", upload.single("img"), App_Creator_content_Test);
 
 router.get(
   "/get_all/content/creator",
