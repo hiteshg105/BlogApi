@@ -1,5 +1,8 @@
 const WarZone = require("../models/warzonemodel");
 const Comment = require("../models/comments");
+const CreatorWarZone = require("../models/ContentCreatorWarzone");
+const Comment1 = require("../models/creatorComment");
+const flatted = require('flatted');
 var cron = require("node-cron");
 const moment = require("moment");
 
@@ -24,7 +27,7 @@ exports.addWar = async (req, res) => {
 // get war
 exports.warZone_list = async (req, res) => {
   try {
-    let  data = await WarZone.find()
+    let data = await WarZone.find()
       .populate("resource1")
       .populate("resource2")
       .populate("category")
@@ -76,7 +79,7 @@ exports.warZone_list = async (req, res) => {
     res.status(200).send({
       success: true,
       message: "warzone listing successfully....",
-     
+
       data: result1,
     });
   } catch (error) {
@@ -477,3 +480,138 @@ exports.getAdminWar = async (req, res) => {
     });
   }
 };
+
+
+
+// Both Warzone get category wise
+
+
+
+
+exports.getBothWarzoneCategoryWise = async (req, res) => {
+  try {
+    // get contetn warzone 
+    const data = await WarZone.find()
+      .populate("resource1")
+      .populate("resource2")
+      .populate("category")
+      .sort({ createdAt: -1 });
+    const dataNew = JSON.parse(JSON.stringify(data));
+
+    for (let i = 0; i < dataNew.length; i++) {
+      const rsc1Comm = await Comment.find({
+        submitresrcId: dataNew[i].resource1._id,
+      });
+      const sumOfRatingsrsc1 = rsc1Comm.reduce((total, comment) => {
+        return total + comment.rating;
+      }, 0);
+      const rsc1AvReview = sumOfRatingsrsc1 / rsc1Comm.length;
+      dataNew[i].resource1.ava_rating = rsc1AvReview;
+
+      const rsc2Comm = await Comment.find({
+        submitresrcId: dataNew[i].resource2._id,
+      });
+      const sumOfRatingsrsc2 = rsc2Comm.reduce((total, comment) => {
+        return total + comment.rating;
+      }, 0);
+      const rsc2AvReview = sumOfRatingsrsc2 / rsc2Comm.length;
+      dataNew[i].resource2.ava_rating = rsc2AvReview;
+    }
+
+    dataNew?.forEach((obj) => {
+      obj.isContent = 0;
+    });
+
+    //get creator content warzone
+
+    let data1 = await CreatorWarZone.find()
+      .populate("resource1")
+      .populate("resource2")
+      .populate({
+        path: "resource1",
+        populate: {
+          path: "category",
+          model: "category", // Assuming "User" is the model name for the user collection
+        },
+      })
+      .populate({
+        path: "resource1",
+        populate: {
+          path: "sub_category",
+          model: "subcategory", // Assuming "User" is the model name for the user collection
+        },
+      })
+      .populate({
+        path: "resource2",
+        populate: {
+          path: "category",
+          model: "category", // Assuming "User" is the model name for the user collection
+        },
+      })
+      .populate({
+        path: "resource2",
+        populate: {
+          path: "sub_category",
+          model: "subcategory", // Assuming "User" is the model name for the user collection
+        },
+      })
+      .populate("category")
+      .sort({ createdAt: -1 })
+    const dataNew1 = JSON.parse(JSON.stringify(data1));
+
+    for (let i = 0; i < dataNew1.length; i++) {
+      const rsc1Comm = await Comment.find({
+        creatorResrcId: dataNew1[i].resource1._id,
+      });
+      const sumOfRatingsrsc1 = rsc1Comm.reduce((total, comment) => {
+        return total + comment.rating;
+      }, 0);
+      const rsc1AvReview = sumOfRatingsrsc1 / rsc1Comm.length;
+      dataNew1[i].resource1.ava_rating = rsc1AvReview;
+
+      const rsc2Comm = await Comment.find({
+        creatorResrcId: dataNew1[i].resource2._id,
+      });
+      const sumOfRatingsrsc2 = rsc2Comm.reduce((total, comment) => {
+        return total + comment.rating;
+      }, 0);
+      const rsc2AvReview = sumOfRatingsrsc2 / rsc2Comm.length;
+      dataNew1[i].resource2.ava_rating = rsc2AvReview;
+    }
+
+
+    dataNew1?.forEach((obj) => {
+      obj.isContent = 1;
+    });
+    const NewArray = dataNew.concat(dataNew1)
+    const categoryTitles = {};
+    NewArray.forEach((item) => {
+      const categoryTitle = item.category?.title;
+
+      if (categoryTitles.hasOwnProperty(categoryTitle)) {
+        categoryTitles[categoryTitle].push(item);
+      } else {
+        categoryTitles[categoryTitle] = [item];
+      }
+    });
+    const result1 = Object.values(categoryTitles);
+
+    res.status(200).json({
+      success: true,
+      message: "both  warzone  detail listing successfully.......",
+      data: result1,
+    });
+
+
+
+
+
+
+  } catch (error) {
+    console.log(error);
+    res.status(400).json({
+      status: false,
+      msg: "Something Went wrong",
+    });
+  }
+}

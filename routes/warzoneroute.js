@@ -12,6 +12,7 @@ const {
   warRscsReviewAll,
   getAdminWar,
   declareWinner,
+  getBothWarzoneCategoryWise,
 } = require("../controller/warzonecontroller");
 const router = express.Router();
 
@@ -27,5 +28,11 @@ router.delete("/delete/warzone/:id", deleteWarzone);
 router.put("/update/warzone/:id", updateWarzone);
 router.get("/update/warzone/admin", getAdminWar);
 router.get("/warzone/result/cron-job", declareWinner);
+
+
+
+router.get("/get/both_warzone", getBothWarzoneCategoryWise);
+
+
 
 module.exports = router;

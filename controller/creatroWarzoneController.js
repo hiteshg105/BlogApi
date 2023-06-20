@@ -2,6 +2,7 @@ const CreatorWarZone = require("../models/ContentCreatorWarzone");
 const Comment = require("../models/creatorComment");
 var cron = require("node-cron");
 const moment = require("moment");
+const deepPopulate = require('deep-populate');
 
 // add war
 exports.addCreatorWar = async (req, res) => {
@@ -24,46 +25,84 @@ exports.addCreatorWar = async (req, res) => {
 // get war
 exports.creator_warZone_list = async (req, res) => {
     try {
-        let data = CreatorWarZone.find()
+        let data1 = await CreatorWarZone.find()
             .populate("resource1")
             .populate("resource2")
+            .populate({
+                path: "resource1",
+                populate: {
+                    path: "category",
+                    model: "category", // Assuming "User" is the model name for the user collection
+                },
+            })
+            .populate({
+                path: "resource1",
+                populate: {
+                    path: "sub_category",
+                    model: "subcategory", // Assuming "User" is the model name for the user collection
+                },
+            })
+            .populate({
+                path: "resource2",
+                populate: {
+                    path: "category",
+                    model: "category", // Assuming "User" is the model name for the user collection
+                },
+            })
+            .populate({
+                path: "resource2",
+                populate: {
+                    path: "sub_category",
+                    model: "subcategory", // Assuming "User" is the model name for the user collection
+                },
+            })
             .populate("category")
-            .sort({ createdAt: -1 });
-        const page = parseInt(req.query.page) || 1;
-        const pageSize = parseInt(req.query.limit) || 20;
-        const skip = (page - 1) * pageSize;
-        const total = await CreatorWarZone.countDocuments();
-        const totalPages = Math.ceil(total / pageSize);
-        data = data.skip(skip).limit(pageSize);
-        if (page > totalPages) {
+            .sort({ createdAt: -1 })
+
+        // const page = parseInt(req.query.page) || 1;
+        // const pageSize = parseInt(req.query.limit) || 20;
+        // const skip = (page - 1) * pageSize;
+        // const total = await CreatorWarZone.countDocuments();
+        // const totalPages = Math.ceil(total / pageSize);
+        // data = data.skip(skip).limit(pageSize);
+        // if (page > totalPages) {
+        //     return res.status(201).json({
+        //         success: false,
+        //         massage: "No data found",
+        //     });
+        // }
+        // const result = await data;y
+        if (data1 === null) {
+            console.log("hello")
+            // Handle the case when data1 is null
             return res.status(201).json({
                 success: false,
-                massage: "No data found",
+                message: 'No data found',
             });
         }
-        const result = await data;
-        const dataNew = JSON.parse(JSON.stringify(result));
-        for (let i = 0; i < dataNew.length; i++) {
+        const dataNew1 = JSON.parse(JSON.stringify(data1));
+        console.log(dataNew1, "datanew1")
+        for (let i = 0; i < dataNew1.length; i++) {
             const rsc1Comm = await Comment.find({
-                creatorResrcId: dataNew[i].resource1._id,
+                creatorResrcId: dataNew1[i].resource1._id,
             });
             const sumOfRatingsrsc1 = rsc1Comm.reduce((total, comment) => {
                 return total + comment.rating;
             }, 0);
             const rsc1AvReview = sumOfRatingsrsc1 / rsc1Comm.length;
-            dataNew[i].resource1.ava_rating = rsc1AvReview;
+            dataNew1[i].resource1.ava_rating = rsc1AvReview;
 
             const rsc2Comm = await Comment.find({
-                creatorResrcId: dataNew[i].resource2._id,
+                creatorResrcId: dataNew1[i].resource2._id,
             });
             const sumOfRatingsrsc2 = rsc2Comm.reduce((total, comment) => {
                 return total + comment.rating;
             }, 0);
             const rsc2AvReview = sumOfRatingsrsc2 / rsc2Comm.length;
-            dataNew[i].resource2.ava_rating = rsc2AvReview;
+            dataNew1[i].resource2.ava_rating = rsc2AvReview;
         }
         const categoryTitles = {};
-        dataNew.forEach((item) => {
+        dataNew1.forEach((item) => {
             const categoryTitle = item.category?.title;
 
             if (categoryTitles.hasOwnProperty(categoryTitle)) {
@@ -77,8 +116,6 @@ exports.creator_warZone_list = async (req, res) => {
             success: true,
             message: "creator warzone listing successfully....",
             count: result1.length,
-            page,
-            totalPages,
             data: result1,
         });
     } catch (error) {
