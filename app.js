@@ -45,6 +45,7 @@ const warzone = require("./routes/warzoneroute");
 const creatorWarzone = require("./routes/creatorWarzoneRoutes");
 const contentCreator = require("./routes/resrc_Creator");
 const creatorComment = require("./routes/creatorComment");
+const header = require("./routes/headerRouter");
 
 //console
 
@@ -78,6 +79,7 @@ app.use("/", warzone);
 app.use("/", creatorWarzone);
 app.use("/", contentCreator);
 app.use("/", creatorComment);
+app.use("/", header);
 
 app.get("/", (req, res) => {
   res.send("Hello World!");

@@ -1,4 +1,4 @@
-const { uploadBase64ImageFile } = require("../helpers/awsuploader");
+const { uploadFile } = require("../helpers/awsuploader");
 const creatorComment = require("../models/creatorComment");
 const ResCreator = require("../models/resrc_creator");
 const SubCategory = require("../models/subcategory");
@@ -320,4 +320,51 @@ exports.listbysubcategoryCreator = async (req, res) => {
 
   // .then((data) => resp.successr(res, data))
   // .catch((error) => resp.errorr(res, error));
+};
+
+exports.App_Creator_content_Test = async (req, res) => {
+  try {
+    let linkFind = req.body.link;
+    let foundDocuments;
+    for (let i = 0; i < linkFind.length; i++) {
+      console.log(linkFind[i].length !== 0);
+      if (linkFind[i].length !== 0) {
+        foundDocuments = await ResCreator.findOne({
+          link: { $in: linkFind[i] },
+        });
+      }
+    }
+
+    // console.log(foundDocuments, "foundDocuments");
+    if (foundDocuments) {
+      res.status(200).json({
+        success: false,
+        // data: newSubmit,
+        message: "content creator exists",
+      });
+    } else {
+      // console.log(req.file);
+      let newSubmit = await ResCreator.create(req.body);
+      if (req.file) {
+        const geturl = await uploadFile(
+          req.file.path,
+          req.file.filename,
+          req.file.mimetype
+        );
+        // console.log(geturl, "geturl");
+        newSubmit.img = geturl.Location;
+        await newSubmit.save();
+      }
+      newSubmit.status = "Deactive";
+      await newSubmit.save();
+      res.status(200).json({
+        success: true,
+        data: newSubmit,
+        message: "Content Crete Successfully..",
+      });
+    }
+    // console.log(foundDocuments,"foundDocuments")
+  } catch (error) {
+    res.status(400).send(error);
+  }
 };
