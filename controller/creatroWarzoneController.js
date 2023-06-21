@@ -167,10 +167,10 @@ exports.getAllCreatorWar = async (req, res) => {
         for (let i = 0; i < dataNew.length; i++) {
             const rsc1Comm = await Comment.find({
                 creatorResrcId: dataNew[i].resource1._id,
-                createdAt: {
-                    $lte: dataNew[i].endDate,
-                    $gte: dataNew[i].startDate,
-                },
+                // createdAt: {
+                //     $lte: dataNew[i].endDate,
+                //     $gte: dataNew[i].startDate,
+                // },
             });
             const sumOfRatingsrsc1 = rsc1Comm.reduce((total, comment) => {
                 return total + comment.rating;
@@ -180,8 +180,8 @@ exports.getAllCreatorWar = async (req, res) => {
 
             const rsc2Comm = await Comment.find({
                 creatorResrcId: dataNew[i].resource2._id,
-                $lte: dataNew[i].endDate,
-                $gte: dataNew[i].startDate,
+                // $lte: dataNew[i].endDate,
+                // $gte: dataNew[i].startDate,
             });
             const sumOfRatingsrsc2 = rsc2Comm.reduce((total, comment) => {
                 return total + comment.rating;
