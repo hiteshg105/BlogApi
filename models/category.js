@@ -5,6 +5,9 @@ const thisSchema = new Schema(
        title:{
         type: String, 
        },
+       count:{
+        type: Number, 
+       },
        desc:{
         type: String, 
        },
