@@ -11,7 +11,8 @@ const { addCreatorWar,
     creatorWarRscsComment, 
     CreatorDeclareWinner, 
     creatorWarRscsReviewAll, 
-    getAdminWarCreator
+    getAdminWarCreator,
+    singleWarContentEdit
    } = require("../controller/creatroWarzoneController");
 
 
@@ -27,6 +28,7 @@ router.get("/get/comment/creator_warzone/:id", creatorWarRscsComment);
 router.get("/creator_warzone/result/cron-job", CreatorDeclareWinner);
 router.get("/get/all/resource/creator_warzone", creatorWarRscsReviewAll);
 router.get("/creator_warzone/admin", getAdminWarCreator);
+router.get("/creator_warzone/single/:id", singleWarContentEdit);
 
 
 

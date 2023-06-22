@@ -2,7 +2,7 @@ const WarZone = require("../models/warzonemodel");
 const Comment = require("../models/comments");
 const CreatorWarZone = require("../models/ContentCreatorWarzone");
 const Comment1 = require("../models/creatorComment");
-const flatted = require('flatted');
+const flatted = require("flatted");
 var cron = require("node-cron");
 const moment = require("moment");
 
@@ -481,16 +481,11 @@ exports.getAdminWar = async (req, res) => {
   }
 };
 
-
-
 // Both Warzone get category wise
-
-
-
 
 exports.getBothWarzoneCategoryWise = async (req, res) => {
   try {
-    // get contetn warzone 
+    // get contetn warzone
     const data = await WarZone.find()
       .populate("resource1")
       .populate("resource2")
@@ -556,7 +551,7 @@ exports.getBothWarzoneCategoryWise = async (req, res) => {
         },
       })
       .populate("category")
-      .sort({ createdAt: -1 })
+      .sort({ createdAt: -1 });
     const dataNew1 = JSON.parse(JSON.stringify(data1));
 
     for (let i = 0; i < dataNew1.length; i++) {
@@ -579,11 +574,10 @@ exports.getBothWarzoneCategoryWise = async (req, res) => {
       dataNew1[i].resource2.ava_rating = rsc2AvReview;
     }
 
-
     dataNew1?.forEach((obj) => {
       obj.isContent = 1;
     });
-    const NewArray = dataNew.concat(dataNew1)
+    const NewArray = dataNew.concat(dataNew1);
     const categoryTitles = {};
     NewArray.forEach((item) => {
       const categoryTitle = item.category?.title;
@@ -601,12 +595,6 @@ exports.getBothWarzoneCategoryWise = async (req, res) => {
       message: "both  warzone  detail listing successfully.......",
       data: result1,
     });
-
-
-
-
-
-
   } catch (error) {
     console.log(error);
     res.status(400).json({
@@ -614,4 +602,25 @@ exports.getBothWarzoneCategoryWise = async (req, res) => {
       msg: "Something Went wrong",
     });
   }
-}
+};
+
+// get single war for edit
+
+exports.singleWarEdit = async (req, res) => {
+  try {
+    const data = await WarZone.findById(req.params.id)
+      .populate("resource1")
+      .populate("resource2");
+    res.status(200).json({
+      status: true,
+      msg: "war detail listing successfully.......",
+      war: data,
+    });
+  } catch (error) {
+    console.log(error);
+    res.status(400).json({
+      status: false,
+      msg: "Something Went wrong",
+    });
+  }
+};

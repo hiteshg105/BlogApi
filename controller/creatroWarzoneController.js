@@ -548,3 +548,22 @@ exports.getAdminWarCreator = async (req, res) => {
         });
     }
 };
+
+exports.singleWarContentEdit = async (req, res) => {
+    try {
+      const data = await CreatorWarZone.findById(req.params.id)
+        .populate("resource1")
+        .populate("resource2");
+      res.status(200).json({
+        status: true,
+        msg: "war detail listing successfully.......",
+        war: data,
+      });
+    } catch (error) {
+      console.log(error);
+      res.status(400).json({
+        status: false,
+        msg: "Something Went wrong",
+      });
+    }
+  };
