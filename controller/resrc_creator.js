@@ -342,6 +342,57 @@ exports.advanceContentfilter = async (req, res) => {
   });
 };
 
+exports.advanceContentfilterNew = async (req, res) => {
+  let query = {};
+  let where = {};
+  // if (req.query.sub_category) {
+  //   query.sub_category = req.query.sub_category;
+  // }
+  if (req.query.format) {
+    query.format = req.query.format;
+  }
+  if (req.query.language) {
+    query.language = req.query.language;
+  }
+
+  let blogs = await ResCreator.find({
+    status: "Active",
+    sub_category: req.body.sub_category,
+  })
+
+    .find(query)
+    .populate("sub_category")
+    .populate("category")
+    .populate("language")
+    .populate("userid");
+  const dataNew = JSON.parse(JSON.stringify(blogs));
+  for (let i = 0; i < dataNew.length; i++) {
+    const rsc1Comm = await creatorComment.find({
+      creatorResrcId: dataNew[i]._id,
+    });
+    // console.log(rsc1Comm);
+    const sumOfRatingsrsc1 = rsc1Comm.reduce((total, comment) => {
+      return total + comment.rating;
+    }, 0);
+    const rsc1AvReview = sumOfRatingsrsc1 / rsc1Comm.length;
+
+    dataNew[i].ava_rating = rsc1AvReview;
+    dataNew[i].length = rsc1Comm.length;
+  }
+  // console.log(dataNew, "dataNew");
+  const NewSortingData = dataNew.sort((a, b) => {
+    if (isNaN(a.ava_rating)) return 1; // Move null values to the end
+    if (isNaN(b.ava_rating)) return -1; // Move null values to the end
+    return b.ava_rating - a.ava_rating; // Compare ratings in descending order
+  });
+
+  return res.status(200).json({
+    message: "blog success",
+    success: true,
+    data: NewSortingData,
+  });
+};
+
 exports.listbysubcategoryCreator = async (req, res) => {
   const getone = await ResCreator.find({
     $and: [{ sub_category: req.params.id }, { status: "Active" }],

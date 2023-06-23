@@ -94,9 +94,16 @@ router.post(
 );
 
 router.post(
+  "/content/advance_content_filter",
+  advanceContentfilterNew
+);
+
+router.post(
   "/content/category/advance_content_filter",
   advanceContentfilterCategory
 );
+
+
 
 router.put("/content/update/admin/:id", updateContent);
 
