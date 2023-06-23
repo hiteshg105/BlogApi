@@ -1413,9 +1413,9 @@ exports.filterbyid = async (req, res) => {
 exports.advancefilter = async (req, res) => {
   let query = {};
   let where = {};
-  if (req.query.sub_category) {
-    query.sub_category = req.query.sub_category;
-  }
+  // if (req.query.sub_category) {
+  //   query.sub_category = req.query.sub_category;
+  // }
 
   if (req.query.type) {
     query.type = req.query.type;
@@ -1430,7 +1430,10 @@ exports.advancefilter = async (req, res) => {
   if (req.query.relYear) {
     query.relYear = req.query.relYear;
   }
-  let blogs = await Submit.find({ aprv_status: "Active" })
+  let blogs = await Submit.find({
+    aprv_status: "Active",
+    sub_category: req.body.sub_category,
+  })
     .find(query)
     //.populate("relYear")
     .populate("sub_category")
