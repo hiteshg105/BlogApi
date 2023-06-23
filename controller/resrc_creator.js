@@ -269,13 +269,14 @@ exports.advanceContentfilter = async (req, res) => {
       return total + comment.rating;
     }, 0);
     const rsc1AvReview = sumOfRatingsrsc1 / rsc1Comm.length;
+
     dataNew[i].ava_rating = rsc1AvReview;
     dataNew[i].length = rsc1Comm.length;
   }
-
+  // console.log(dataNew, "dataNew");
   const NewSortingData = dataNew.sort((a, b) => {
-    if (a.ava_rating === null) return 1; // Move null values to the end
-    if (b.ava_rating === null) return -1; // Move null values to the end
+    if (isNaN(a.ava_rating)) return 1; // Move null values to the end
+    if (isNaN(b.ava_rating)) return -1; // Move null values to the end
     return b.ava_rating - a.ava_rating; // Compare ratings in descending order
   });
 

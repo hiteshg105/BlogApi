@@ -6,6 +6,7 @@ var MongoQS = require("mongo-querystring");
 const resp = require("../helpers/apiResponse");
 const SubCategory = require("../models/subcategory");
 const CurrntMonth = require("../models/currentMonth");
+const Comment = require("../models/comments");
 var _ = require("lodash");
 
 const cloudinary = require("cloudinary").v2;
@@ -160,7 +161,7 @@ exports.App_Sub_resrc = async (req, res) => {
   //##############
   if (img) {
     if (img) {
-      console.log(img)
+      console.log(img);
       const base64Data = new Buffer.from(
         img.replace(/^data:image\/\w+;base64,/, ""),
         "base64"
@@ -1437,11 +1438,30 @@ exports.advancefilter = async (req, res) => {
     .populate("language")
     .populate("relYear")
     .sort({ ava_rating: -1 });
+  const dataNew = JSON.parse(JSON.stringify(blogs));
+  for (let i = 0; i < dataNew.length; i++) {
+    const rsc1Comm = await Comment.find({
+      submitresrcId: dataNew[i]._id,
+    });
+    // console.log(rsc1Comm);
+    const sumOfRatingsrsc1 = rsc1Comm.reduce((total, comment) => {
+      return total + comment.rating;
+    }, 0);
+    const rsc1AvReview = sumOfRatingsrsc1 / rsc1Comm.length;
+    dataNew[i].ava_rating = rsc1AvReview;
+    dataNew[i].length = rsc1Comm.length;
+  }
+
+  const NewSortingData = dataNew.sort((a, b) => {
+    if (a.ava_rating === null) return 1; // Move null values to the end
+    if (b.ava_rating === null) return -1; // Move null values to the end
+    return b.ava_rating - a.ava_rating; // Compare ratings in descending order
+  });
   //console.log("blogs",req.query.topics)
   return res.status(200).json({
     message: "blog success",
     count: blogs.length,
-    data: blogs,
+    data: NewSortingData,
   });
 };
 
