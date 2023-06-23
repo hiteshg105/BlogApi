@@ -95,7 +95,7 @@ router.post(
 );
 
 router.post(
-  "/content/advance_content_filter",
+  "/content/advance_content_filter_new",
   advanceContentfilterNew
 );
 
