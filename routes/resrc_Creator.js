@@ -10,6 +10,7 @@ const {
   updateContent,
   deleteContent,
   advanceContentfilter,
+  advanceContentfilterNew,
   keyword_search_filter,
   listbysubcategoryCreator,
   App_Creator_content_Test,

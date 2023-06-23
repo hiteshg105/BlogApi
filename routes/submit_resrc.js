@@ -33,6 +33,7 @@ const {
   edit_promotion,
   filterbyid,
   advancefilter,
+  advancefilterNew,
   hashfilter,
   filter,
   regidnamemobemail,
