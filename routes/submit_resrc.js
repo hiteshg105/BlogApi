@@ -41,7 +41,8 @@ const {
   search_filter,
   keyword_search_filter,
   promotion_search_filter,
-  active_resrc_lsit
+  active_resrc_lsit,
+  advancefilterCategory
 
 } = require("../controller/submit_resrc");
 
@@ -107,6 +108,7 @@ router.post("/admin/edit_promotion/:id", edit_promotion);
 router.get("/user/filterbyid/:sub_category/:?type/:format", filterbyid);
 // :id?type/:id?format?/:id?relYear?
 router.post("/user/advancefilter", advancefilter);
+router.post("/user/advancefilter/category", advancefilterCategory);
 router.post("/user/hashfilter", hashfilter);
 router.post("/user/filter", filter);
 router.post("/user/regidname", regidnamemobemail);

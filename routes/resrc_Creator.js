@@ -13,6 +13,7 @@ const {
   keyword_search_filter,
   listbysubcategoryCreator,
   App_Creator_content_Test,
+  advanceContentfilterCategory,
 } = require("../controller/resrc_creator");
 
 // if (!fs.existsSync("./uploads")) {
@@ -90,6 +91,11 @@ router.post(
 router.post(
   "/content/advance_content_filter",
   advanceContentfilter
+);
+
+router.post(
+  "/content/category/advance_content_filter",
+  advanceContentfilterCategory
 );
 
 router.put("/content/update/admin/:id", updateContent);
