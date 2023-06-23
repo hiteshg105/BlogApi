@@ -294,9 +294,9 @@ exports.advanceContentfilterCategory = async (req, res) => {
 exports.advanceContentfilter = async (req, res) => {
   let query = {};
   let where = {};
-  // if (req.query.sub_category) {
-  //   query.sub_category = req.query.sub_category;
-  // }
+  if (req.query.sub_category) {
+    query.sub_category = req.query.sub_category;
+  }
   if (req.query.format) {
     query.format = req.query.format;
   }
@@ -306,7 +306,7 @@ exports.advanceContentfilter = async (req, res) => {
 
   let blogs = await ResCreator.find({
     status: "Active",
-    sub_category: req.body.sub_category,
+  //  sub_category: req.body.sub_category,
   })
 
     .find(query)
