@@ -42,8 +42,7 @@ const {
   keyword_search_filter,
   promotion_search_filter,
   active_resrc_lsit,
-  advancefilterCategory
-
+  advancefilterCategory,
 } = require("../controller/submit_resrc");
 
 if (!fs.existsSync("./uploads")) {
@@ -66,9 +65,7 @@ let multipleUpload = uploads.fields([
   { name: "img", maxCount: 1 },
 
   //   { name: "storepan_img", maxCount: 5 },
-
 ]);
-
 
 router.post("/user/addSub_resrc", uploads.single("img"), addSub_resrc);
 router.post("/user/App_Sub_resrc", uploads.single("img"), App_Sub_resrc);
@@ -94,7 +91,6 @@ router.get("/user/my_content_meteros/:id", my_content_meteros);
 router.get("/user/filter_type/:sub_category/:id", filter_type);
 router.get("/user/filterbyFormat/:sub_category/:id", filterbyFormat);
 
-
 router.post("/user/search_topic_title", search_topic_title);
 router.get("/user/filterbyyear/:sub_category/:id", filterbyyear);
 
@@ -119,16 +115,7 @@ router.post("/user/search_filter", search_filter);
 router.post("/user/keyword_search_filter", keyword_search_filter);
 router.post("/user/promotion_search_filter", promotion_search_filter);
 
-
-router.get("/user/get_all_active_resrc_lsit", active_resrc_lsit)
-
-
-
-
-
+router.get("/user/get_all_active_resrc_lsit", active_resrc_lsit);
 
 //advancefilterRR
 module.exports = router;
-
-
-
