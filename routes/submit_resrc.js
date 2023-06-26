@@ -45,6 +45,7 @@ const {
   active_resrc_lsit,
   advancefilterCategory,
   search_topic_title_test,
+  advancefilterCategoryNew,
 } = require("../controller/submit_resrc");
 
 if (!fs.existsSync("./uploads")) {
@@ -109,6 +110,7 @@ router.get("/user/filterbyid/:sub_category/:?type/:format", filterbyid);
 router.post("/user/advancefilter", advancefilter);
 router.post("/user/advancefilterNew", advancefilterNew);
 router.post("/user/advancefilter/category", advancefilterCategory);
+router.post("/user/advancefilter/categoryNew", advancefilterCategoryNew);
 router.post("/user/hashfilter", hashfilter);
 router.post("/user/filter", filter);
 router.post("/user/regidname", regidnamemobemail);

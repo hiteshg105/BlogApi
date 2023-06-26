@@ -15,6 +15,7 @@ const {
   listbysubcategoryCreator,
   App_Creator_content_Test,
   advanceContentfilterCategory,
+  advanceContentfilterCategoryNew,
 } = require("../controller/resrc_creator");
 
 // if (!fs.existsSync("./uploads")) {
@@ -102,6 +103,11 @@ router.post(
 router.post(
   "/content/category/advance_content_filter",
   advanceContentfilterCategory
+);
+
+router.post(
+  "/content/category/advance_content_filterNew",
+  advanceContentfilterCategoryNew
 );
 
 
