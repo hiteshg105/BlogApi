@@ -294,16 +294,12 @@ exports.advanceContentfilter = async (req, res) => {
     query.language = req.query.language;
   }
 
-  const { searchinput } = req.body;
-  console.log(searchinput, "searchinput");
+ 
 
   let blogs = await ResCreator.find({
     status: "Active",
-    sub_category: req.body.sub_category,
-    $or: [
-      { creatorName: { $regex: searchinput, $options: "i" } },
-      { topics: { $regex: searchinput, $options: "i" } },
-    ],
+    // sub_category: req.body.sub_category,
+   
   })
 
     .find(query)
@@ -352,9 +348,16 @@ exports.advanceContentfilterNew = async (req, res) => {
     query.language = req.query.language;
   }
 
+  const { searchinput } = req.body;
+  console.log(searchinput, "searchinput");
+
   let blogs = await ResCreator.find({
     status: "Active",
     sub_category: req.body.sub_category,
+    $or: [
+      { creatorName: { $regex: searchinput, $options: "i" } },
+      { topics: { $regex: searchinput, $options: "i" } },
+    ],
   })
 
     .find(query)
