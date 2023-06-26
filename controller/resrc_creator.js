@@ -243,22 +243,12 @@ exports.deleteContent = async (req, res) => {
 exports.advanceContentfilterCategory = async (req, res) => {
   let query = {};
   let where = {};
-  // if (req.query.sub_category) {
-  //   query.sub_category = req.query.sub_category;
-  // }
-  if (req.query.format) {
-    query.format = req.query.format;
-  }
-  if (req.query.language) {
-    query.language = req.query.language;
-  }
 
   let blogs = await ResCreator.find({
     status: "Active",
     category: req.body.category,
   })
 
-    .find(query)
     .populate("sub_category")
     .populate("category")
     .populate("language")
@@ -304,9 +294,16 @@ exports.advanceContentfilter = async (req, res) => {
     query.language = req.query.language;
   }
 
+  const { searchinput } = req.body;
+  console.log(searchinput, "searchinput");
+
   let blogs = await ResCreator.find({
     status: "Active",
-  //  sub_category: req.body.sub_category,
+    sub_category: req.body.sub_category,
+    $or: [
+      { creatorName: { $regex: searchinput, $options: "i" } },
+      { topics: { $regex: searchinput, $options: "i" } },
+    ],
   })
 
     .find(query)

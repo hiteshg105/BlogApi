@@ -7,6 +7,8 @@ const resp = require("../helpers/apiResponse");
 const SubCategory = require("../models/subcategory");
 const CurrntMonth = require("../models/currentMonth");
 const Comment = require("../models/comments");
+const ContentCreator = require("../models/resrc_creator");
+
 var _ = require("lodash");
 
 const cloudinary = require("cloudinary").v2;
@@ -759,6 +761,41 @@ exports.search_topic_title = async (req, res) => {
       });
     });
 };
+
+exports.search_topic_title_test = async (req, res) => {
+  try {
+    const { searchinput } = req.body;
+    const resource = await Submit.find({
+      $or: [
+        { resTitle: { $regex: searchinput, $options: "i" } },
+        { topics: { $regex: searchinput, $options: "i" } },
+      ],
+    })
+      .find({ aprv_status: "Active" })
+      .populate("language")
+      .populate("relYear");
+    const content = await ContentCreator.find({
+      $or: [
+        { topics: { $regex: searchinput, $options: "i" } },
+        { creatorName: { $regex: searchinput, $options: "i" } },
+      ],
+    })
+      .find({ status: "Active" })
+      .populate("language");
+    res.status(200).json({
+      status: true,
+      resource,
+      content,
+    });
+  } catch (error) {
+    res.status(400).json({
+      status: false,
+      msg: "error",
+      error: error,
+    });
+  }
+};
+
 exports.filterbyyear = async (req, res) => {
   const findall = await Submit.find({
     $and: [
@@ -1413,6 +1450,7 @@ exports.filterbyid = async (req, res) => {
 exports.advancefilter = async (req, res) => {
   let query = {};
   let where = {};
+
   if (req.query.sub_category) {
     query.sub_category = req.query.sub_category;
   }
@@ -1430,10 +1468,19 @@ exports.advancefilter = async (req, res) => {
   if (req.query.relYear) {
     query.relYear = req.query.relYear;
   }
+
+  const { searchinput } = req.body;
+  console.log(searchinput, "searchinput");
+
   let blogs = await Submit.find({
     aprv_status: "Active",
-   // sub_category: req.body.sub_category,
+    sub_category: req.body.sub_category,
+    $or: [
+      { resTitle: { $regex: searchinput, $options: "i" } },
+      { topics: { $regex: searchinput, $options: "i" } },
+    ],
   })
+
     .find(query)
     //.populate("relYear")
     .populate("sub_category")
@@ -1488,6 +1535,7 @@ exports.advancefilterNew = async (req, res) => {
   if (req.query.relYear) {
     query.relYear = req.query.relYear;
   }
+
   let blogs = await Submit.find({
     aprv_status: "Active",
     sub_category: req.body.sub_category,
@@ -1529,34 +1577,18 @@ exports.advancefilterNew = async (req, res) => {
 exports.advancefilterCategory = async (req, res) => {
   let query = {};
   let where = {};
-  // if (req.query.sub_category) {
-  //   query.sub_category = req.query.sub_category;
-  // }
 
-  if (req.query.type) {
-    query.type = req.query.type;
-    // where.push({type: req.query.type})
-  }
-  if (req.query.format) {
-    query.format = req.query.format;
-  }
-  if (req.query.language) {
-    query.language = req.query.language;
-  }
-  if (req.query.relYear) {
-    query.relYear = req.query.relYear;
-  }
   let blogs = await Submit.find({
     aprv_status: "Active",
     category: req.body.category,
   })
-    .find(query)
     //.populate("relYear")
     .populate("sub_category")
     .populate("category")
     .populate("language")
     .populate("relYear")
     .sort({ ava_rating: -1 });
+  // console.log(blogs,"blogs");
   const dataNew = JSON.parse(JSON.stringify(blogs));
   for (let i = 0; i < dataNew.length; i++) {
     const rsc1Comm = await Comment.find({

@@ -44,6 +44,7 @@ const {
   promotion_search_filter,
   active_resrc_lsit,
   advancefilterCategory,
+  search_topic_title_test,
 } = require("../controller/submit_resrc");
 
 if (!fs.existsSync("./uploads")) {
@@ -93,6 +94,7 @@ router.get("/user/filter_type/:sub_category/:id", filter_type);
 router.get("/user/filterbyFormat/:sub_category/:id", filterbyFormat);
 
 router.post("/user/search_topic_title", search_topic_title);
+router.post("/user/search_topic_title/test", search_topic_title_test);
 router.get("/user/filterbyyear/:sub_category/:id", filterbyyear);
 
 router.get("/user/filterbyLanguage/:sub_category/:id", filterbyLanguage);
