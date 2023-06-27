@@ -26,6 +26,10 @@ const warContentCreatorSchema = new Schema(
       type: Boolean,
       default: false,
     },
+    status: {
+      type: String,
+      default: "Active",
+    },
     startDate: {
       type: Date,
     },
