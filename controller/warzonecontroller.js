@@ -486,7 +486,9 @@ exports.getAdminWar = async (req, res) => {
 exports.getBothWarzoneCategoryWise = async (req, res) => {
   try {
     // get contetn warzone
-    const data = await WarZone.find()
+    const data = await WarZone.find({
+      status: "Active"
+    })
       .populate("resource1")
       .populate("resource2")
       .populate("category")
@@ -519,7 +521,9 @@ exports.getBothWarzoneCategoryWise = async (req, res) => {
 
     //get creator content warzone
 
-    let data1 = await CreatorWarZone.find()
+    let data1 = await CreatorWarZone.find({
+      status: "Active"
+    })
       .populate("resource1")
       .populate("resource2")
       .populate({
