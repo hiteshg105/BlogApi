@@ -16,6 +16,7 @@ const {
   App_Creator_content_Test,
   advanceContentfilterCategory,
   advanceContentfilterCategoryNew,
+  getAllContentCreatorHome,
 } = require("../controller/resrc_creator");
 
 // if (!fs.existsSync("./uploads")) {
@@ -67,7 +68,11 @@ var upload = multer({
   },
 });
 
-router.post("/user/content/creator", upload.single("img"), App_Creator_content_Test);
+router.post(
+  "/user/content/creator",
+  upload.single("img"),
+  App_Creator_content_Test
+);
 
 router.get(
   "/get_all/content/creator",
@@ -80,25 +85,18 @@ router.get(
   getSingleContentCreatorData
 );
 
+router.get("/content/creator/get_content_data/home", getAllContentCreatorHome);
+
 router.get(
   "/content/search_topic_title_content_creator",
   search_topic_title_content_creator
 );
 
-router.post(
-  "/content/keyword_search_filter",
-  keyword_search_filter
-);
+router.post("/content/keyword_search_filter", keyword_search_filter);
 
-router.post(
-  "/content/advance_content_filter",
-  advanceContentfilter
-);
+router.post("/content/advance_content_filter", advanceContentfilter);
 
-router.post(
-  "/content/advance_content_filter_new",
-  advanceContentfilterNew
-);
+router.post("/content/advance_content_filter_new", advanceContentfilterNew);
 
 router.post(
   "/content/category/advance_content_filter",
@@ -109,8 +107,6 @@ router.post(
   "/content/category/advance_content_filterNew",
   advanceContentfilterCategoryNew
 );
-
-
 
 router.put("/content/update/admin/:id", updateContent);
 

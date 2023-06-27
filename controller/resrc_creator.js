@@ -531,3 +531,56 @@ exports.App_Creator_content_Test = async (req, res) => {
     res.status(400).send(error);
   }
 };
+
+// Home page
+exports.getAllContentCreatorHome = async (req, res) => {
+  try {
+    let data = await ResCreator.find({isHomePage:true})
+      .populate("userid")
+      .populate("sub_category")
+      .populate("category")
+      .populate("language");
+
+    // const page = parseInt(req.query.page) || 1;
+    // const pageSize = parseInt(req.query.limit) || 20;
+    // const skip = (page - 1) * pageSize;
+    // const total = await ResCreator.countDocuments();
+    // const totalPages = Math.ceil(total / pageSize);
+    // data = data.skip(skip).limit(pageSize);
+    // if (page > totalPages) {
+    //   return res.status(201).json({
+    //     success: false,
+    //     massage: "No data found",
+    //   });
+    // }
+    // const result = await data;
+    const dataNew = JSON.parse(JSON.stringify(data));
+    for (let i = 0; i < dataNew.length; i++) {
+      const rsc1Comm = await creatorComment.find({
+        creatorResrcId: dataNew[i]._id,
+      });
+      // console.log(rsc1Comm);
+      const sumOfRatingsrsc1 = rsc1Comm.reduce((total, comment) => {
+        return total + comment.rating;
+      }, 0);
+      const rsc1AvReview = sumOfRatingsrsc1 / rsc1Comm.length;
+      dataNew[i].ava_rating = rsc1AvReview;
+      dataNew[i].length = rsc1Comm.length;
+    }
+
+    res.status(200).send({
+      success: true,
+      message: "Content Creteor listing successfully....",
+      // count: result.length,
+      // page,
+      // totalPages,
+      data: dataNew,
+    });
+  } catch (error) {
+    console.log(error);
+    res.status(400).json({
+      status: false,
+      msg: "Something Went wrong",
+    });
+  }
+};

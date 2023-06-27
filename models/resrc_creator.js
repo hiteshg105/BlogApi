@@ -2,7 +2,6 @@ const mongoose = require("mongoose");
 const Schema = mongoose.Schema;
 const thisSchema = new Schema(
   {
-    
     userid: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "user",
@@ -33,7 +32,7 @@ const thisSchema = new Schema(
     topics: {
       type: String,
     },
-   desc: {
+    desc: {
       type: String,
     },
 
@@ -55,6 +54,10 @@ const thisSchema = new Schema(
     status: {
       type: String,
       default: "Deactive",
+    },
+    isHomePage: {
+      type: Boolean,
+      default: false,
     },
   },
 
